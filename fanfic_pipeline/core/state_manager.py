@@ -65,7 +65,10 @@ class ProjectStateManager:
         meta = self.load_project_meta(); meta.update(updates); _atomic_write(self.meta_path, meta)
     def load_pod(self) -> PointOfDivergence:
         with open(self.pod_path, "r", encoding="utf-8") as f: return PointOfDivergence(**json.load(f))
+    def save_pod(self, pod: PointOfDivergence):
+        _atomic_write(self.pod_path, pod.model_dump())
     def load_voices(self) -> Dict[str, CharacterVoice]:
+
         with open(self.voices_path, "r", encoding="utf-8") as f: data=json.load(f); return {k: CharacterVoice(**v) for k,v in data.items()}
     def load_relationships(self) -> List[RelationshipState]:
         with open(self.relationship_path, "r", encoding="utf-8") as f: data=json.load(f); return [RelationshipState(**r) for r in data]

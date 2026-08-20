@@ -587,9 +587,59 @@ def cmd_enrich(args):
     print(f"  - 📜 Tóm tắt chiến dịch (Arc Summaries): {stats.get('arc_summaries', 0)}")
     print(f"👉 Story Bible v2 lưu tại: {bible_v2_path}\n")
 
+def cmd_brainstorm_premise(args):
+    from fanfic_pipeline.core.ideator import PremiseIdeator
+    project_id = args.project
+    mgr = ProjectStateManager(project_id)
+    print(f"\n🧠 [BRAINSTORM PREMISE] Đang sinh ý tưởng What-If cho tác phẩm '{args.fandom}'...")
+    print(f"💡 Gợi ý chủ đề: {args.trope}\n")
+    premises = PremiseIdeator.brainstorm(fandom=args.fandom, trope_hint=args.trope)
+    for i, p in enumerate(premises, 1):
+        print(f"[{i}] Mốc: {p.divergence_anchor}")
+        print(f"    Giả thiết: {p.what_if_premise}")
+        print(f"    Cánh bướm: {', '.join(p.butterfly_effects)}")
+        print(f"    Bất biến: {', '.join(p.frozen_canon)}\n")
+    if args.save and 1 <= args.save <= len(premises):
+        chosen = premises[args.save - 1]
+        mgr.save_pod(chosen)
+        print(f"✅ Đã lưu ý tưởng [{args.save}] làm Point of Divergence cho dự án '{project_id}'!\n")
+
+def cmd_create_oc(args):
+    from fanfic_pipeline.core.ideator import OCCreator
+    import json
+    project_id = args.project
+    mgr = ProjectStateManager(project_id)
+    print(f"\n👤 [CREATE OC] Đang thiết kế nhân vật '{args.name}'...")
+    voice, rel = OCCreator.craft_oc(character_name=args.name, concept=args.concept, role=args.role)
+    print(f"✨ Tên: {voice.name} ({', '.join(voice.aliases)})")
+    print(f"   Tính cách cốt lõi: {voice.personality_core}")
+    print(f"   Khẩu khí: {voice.dialogue_rhythm}")
+    print(f"   Thói quen: {', '.join(voice.micro_behaviors)}")
+    print(f"   Ranh giới đạo đức: {voice.moral_boundaries}")
+    print(f"   Động cơ bí mật: {voice.secret_motive}")
+    print(f"   Quan hệ với Mạnh Kỳ: {rel.current_dynamic} (Trope: {rel.trope_type}, Thân mật: {rel.intimacy_level}/10)\n")
+    voices = mgr.load_voices()
+    voices[voice.name] = voice
+    with open(mgr.voices_path, "w", encoding="utf-8") as f:
+        json.dump({k: v.model_dump() for k, v in voices.items()}, f, ensure_ascii=False, indent=2)
+    print(f"✅ Đã lưu nhân vật '{voice.name}' vào character_voices của dự án '{project_id}'!\n")
+
 def main():
     parser = argparse.ArgumentParser(description="Fanfic AI Agentic Pipeline CLI")
     subparsers = parser.add_subparsers(dest="command", required=True)
+
+    # Ideator
+    p_bp = subparsers.add_parser("brainstorm-premise", help="Sinh ý tưởng What-If / POD cho fanfic")
+    p_bp.add_argument("--project", default="nhat_the_fanfic", help="Mã ID dự án")
+    p_bp.add_argument("--fandom", default="Nhất Thế Chi Tôn", help="Tên tác phẩm gốc")
+    p_bp.add_argument("--trope", default="Hệ thống / Xuyên không / Thêm thành viên", help="Chủ đề / Trope ưa thích")
+    p_bp.add_argument("--save", type=int, default=None, help="Tự động chọn ý tưởng 1..3 để lưu làm POD")
+
+    p_oc = subparsers.add_parser("create-oc", help="Thiết kế nhân vật gốc (OC) kèm khẩu khí và quan hệ")
+    p_oc.add_argument("--project", default="nhat_the_fanfic", help="Mã ID dự án")
+    p_oc.add_argument("--name", default="Lục Thanh Tiêu", help="Tên nhân vật OC")
+    p_oc.add_argument("--concept", default="Đao khách xuất thân tán tu, tính tình lầy lội nhưng tinh thông cơ quan thuật", help="Ý tưởng cốt lõi")
+    p_oc.add_argument("--role", default="Thành viên thứ 6 của tiểu đội Luân Hồi", help="Vai trò trong cốt truyện")
 
     # Enrich
     p_enrich = subparsers.add_parser("enrich", help="Enrichment pipeline: trích xuất tri thức từ EPUB đã ingest")
@@ -669,7 +719,11 @@ def main():
 
     args = parser.parse_args()
 
-    if args.command == "enrich":
+    if args.command == "brainstorm-premise":
+        cmd_brainstorm_premise(args)
+    elif args.command == "create-oc":
+        cmd_create_oc(args)
+    elif args.command == "enrich":
         cmd_enrich(args)
     elif args.command == "canon":
         cmd_canon(args)
@@ -695,6 +749,7 @@ def main():
         cmd_status(args)
     elif args.command == "export":
         cmd_export(args)
+
 
 if __name__ == "__main__":
     main()
