@@ -81,13 +81,33 @@ class ContextCompiler:
         state_sec = f"Địa điểm: {full_state.get('current_location','')}\nNhân vật: {', '.join(active_characters)}\nTrạng thái sức khỏe: {status_text or 'Bình thường, sẵn sàng giao chiến'}\nThiện công: {full_state.get('team_thien_cong',{})}\nCảnh giới: {full_state.get('character_realms',{})}"
 
         arc_sec = f"Quyển: {planner_ctx.get('volume_title','')} | Phân đoạn: {planner_ctx.get('arc_title','')}\nMục tiêu: {planner_ctx.get('mini_arc_objective','')}\nPhục bút: {'; '.join(planner_ctx.get('due_hooks',[]))}"
-        voice_lines=[]
+        # Dynamic voice, timeline snapshot and epistemic boundary from CanonIntelligenceEngine
+        try:
+            from fanfic_pipeline.packages.canon.canon_intelligence import CanonIntelligenceEngine
+            t_snap = CanonIntelligenceEngine.get_timeline_snapshot(chapter_num)
+            arc_sec += f"\n[ĐẠI CHIẾN DỊCH CANON]: {t_snap['active_grand_arc']}\n- Kẻ giật dây ngầm: {t_snap['mastermind_shadow']}\n- Mưu đồ: {t_snap['underlying_conspiracy']}"
+            ep_bound = CanonIntelligenceEngine.get_epistemic_boundary(pov_character, chapter_num)
+            if ep_bound.get("forbidden"):
+                if not forbidden: forbidden = []
+                forbidden.extend(ep_bound["forbidden"])
+        except Exception:
+            pass
+
+        voice_lines = []
         for c in active_characters:
-            v = voices.get(c) or voices.get(c.lower()) if isinstance(voices, dict) else None
-            if v and hasattr(v, 'name'):
-                voice_lines.append(f"- {v.name}: '{v.dialogue_rhythm}'")
-            elif v and isinstance(v, dict):
-                voice_lines.append(f"- {v.get('name',c)}: {v.get('dialogue_rhythm','')}")
+            if c in voices:
+                v = voices[c]
+                # Stage-aware dynamic voice evolution
+                try:
+                    from fanfic_pipeline.packages.canon.canon_intelligence import CanonIntelligenceEngine
+                    if hasattr(v, "personality_core"):
+                        v = CanonIntelligenceEngine.get_voice_for_chapter(c, chapter_num, v)
+                except Exception:
+                    pass
+                if hasattr(v, "dialogue_rhythm"):
+                    voice_lines.append(f"- {v.name}: {v.personality_core} | Khẩu khí: {v.dialogue_rhythm}")
+                else:
+                    voice_lines.append(f"- {v.get('name',c)}: {v.get('dialogue_rhythm','')}")
             elif self.enrichment_store:
                 ent = self.enrichment_store.query_entity(c)
                 if ent:
