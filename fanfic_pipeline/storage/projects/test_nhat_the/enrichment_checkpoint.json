@@ -1,0 +1,17 @@
+{
+  "project_id": "nhat_the_fanfic",
+  "total_chapters": 1409,
+  "window_size": 30,
+  "completed_windows": [
+    1
+  ],
+  "last_completed_chapter": 30,
+  "stats": {
+    "entities": 10,
+    "relationships": 7,
+    "causal_links": 0,
+    "epistemic_records": 0,
+    "arc_summaries": 1
+  },
+  "updated_at": "2026-08-20T15:08:14.531351"
+}

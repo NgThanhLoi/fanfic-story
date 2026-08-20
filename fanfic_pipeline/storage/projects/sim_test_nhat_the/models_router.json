@@ -1,0 +1,47 @@
+{
+  "architect_agent": {
+    "provider": "openrouter",
+    "model_name": "deepseek/deepseek-r1",
+    "base_url": "https://openrouter.ai/api/v1",
+    "api_key_env": "OPENROUTER_API_KEY",
+    "temperature": 0.6,
+    "max_tokens": 4096,
+    "timeout_seconds": 60
+  },
+  "composer_agent": {
+    "provider": "openrouter",
+    "model_name": "anthropic/claude-3.7-sonnet",
+    "base_url": "https://openrouter.ai/api/v1",
+    "api_key_env": "OPENROUTER_API_KEY",
+    "temperature": 0.7,
+    "max_tokens": 4096,
+    "timeout_seconds": 60
+  },
+  "writer_agent": {
+    "provider": "openrouter",
+    "model_name": "deepseek/deepseek-chat",
+    "base_url": "https://openrouter.ai/api/v1",
+    "api_key_env": "OPENROUTER_API_KEY",
+    "temperature": 0.85,
+    "max_tokens": 6000,
+    "timeout_seconds": 60
+  },
+  "ooc_critic_agent": {
+    "provider": "openrouter",
+    "model_name": "deepseek/deepseek-r1",
+    "base_url": "https://openrouter.ai/api/v1",
+    "api_key_env": "OPENROUTER_API_KEY",
+    "temperature": 0.3,
+    "max_tokens": 4096,
+    "timeout_seconds": 60
+  },
+  "polisher_agent": {
+    "provider": "openrouter",
+    "model_name": "google/gemini-2.5-flash",
+    "base_url": "https://openrouter.ai/api/v1",
+    "api_key_env": "OPENROUTER_API_KEY",
+    "temperature": 0.5,
+    "max_tokens": 4096,
+    "timeout_seconds": 60
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "architect_agent": {
+    "provider": "cliproxyapi",
+    "model_name": "deepseek-v4-flash-free",
+    "base_url": "http://47.237.140.200/v1",
+    "api_key_env": "cpa-local-9f3a7e2b1c4d",
+    "temperature": 0.7,
+    "max_tokens": 4096,
+    "timeout_seconds": 90,
+    "max_retries": 3
+  },
+  "composer_agent": {
+    "provider": "cliproxyapi",
+    "model_name": "deepseek-v4-flash-free",
+    "base_url": "http://47.237.140.200/v1",
+    "api_key_env": "cpa-local-9f3a7e2b1c4d",
+    "temperature": 0.7,
+    "max_tokens": 4096,
+    "timeout_seconds": 90,
+    "max_retries": 3
+  },
+  "writer_agent": {
+    "provider": "cliproxyapi",
+    "model_name": "deepseek-v4-flash-free",
+    "base_url": "http://47.237.140.200/v1",
+    "api_key_env": "cpa-local-9f3a7e2b1c4d",
+    "temperature": 0.8,
+    "max_tokens": 4096,
+    "timeout_seconds": 90,
+    "max_retries": 3
+  },
+  "ooc_critic_agent": {
+    "provider": "cliproxyapi",
+    "model_name": "deepseek-v4-flash-free",
+    "base_url": "http://47.237.140.200/v1",
+    "api_key_env": "cpa-local-9f3a7e2b1c4d",
+    "temperature": 0.2,
+    "max_tokens": 4096,
+    "timeout_seconds": 90,
+    "max_retries": 3
+  },
+  "polisher_agent": {
+    "provider": "cliproxyapi",
+    "model_name": "deepseek-v4-flash-free",
+    "base_url": "http://47.237.140.200/v1",
+    "api_key_env": "cpa-local-9f3a7e2b1c4d",
+    "temperature": 0.7,
+    "max_tokens": 4096,
+    "timeout_seconds": 90,
+    "max_retries": 3
+  }
+}
