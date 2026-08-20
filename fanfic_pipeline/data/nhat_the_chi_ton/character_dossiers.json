@@ -2,38 +2,127 @@
   "characters": {
     "meng_qi": {
       "name": "Mạnh Kỳ",
-      "aliases": ["Chân Định", "Cuồng Đao Tô Mạnh", "Tô Tử Viễn", "Tiểu Hòa Thượng", "Tô Tiên Sinh"],
+      "aliases": [
+        "Chân Định",
+        "Cuồng Đao Tô Mạnh",
+        "Tô Tử Viễn",
+        "Tiểu Hòa Thượng",
+        "Tô Tiên Sinh",
+        "Ngọc Hư Chưởng Giáo"
+      ],
       "gender": "Nam",
+      "first_seen_chapter": 2,
+      "total_mentions": 1357,
       "stages": {
-        "stage_1": {"chapters": "1-50", "title": "Chân Định", "tone": "Dí dỏm, sợ chết, lươn lẹo, thích trang bức."},
-        "stage_2": {"chapters": "51-200", "title": "Cuồng Đao Tô Mạnh", "tone": "Hào sảng, ngạo khí, đao ý cuồng bạo."},
-        "stage_3": {"chapters": "201-800", "title": "Tô Tiên Sinh", "tone": "Lãnh đạm, trầm mặc, tóc bạc mang hận."},
-        "stage_4": {"chapters": "801-1409", "title": "Ngọc Hư Chưởng Giáo", "tone": "Uy nghiêm, thấu triệt nhân quả, chấp chưởng Côn Luân."}
-      }
+        "stage_1": {
+          "chapters": "1-50",
+          "title": "Chân Định",
+          "tone": "Dí dỏm, sợ chết, lươn lẹo, thích trang bức."
+        },
+        "stage_2": {
+          "chapters": "51-200",
+          "title": "Cuồng Đao Tô Mạnh",
+          "tone": "Hào sảng, ngạo khí, đao ý cuồng bạo."
+        },
+        "stage_3": {
+          "chapters": "201-800",
+          "title": "Tô Tiên Sinh",
+          "tone": "Lãnh đạm, trầm mặc, tóc bạc mang hận báo thù."
+        },
+        "stage_4": {
+          "chapters": "801-1409",
+          "title": "Ngọc Hư Chưởng Giáo",
+          "tone": "Uy nghiêm, thấu triệt nhân quả, chấp chưởng Côn Luân."
+        }
+      },
+      "key_dialogue_samples": [
+        "[Ch.2] “二少爷，您醒了？”",
+        "[Ch.3] “南无阿弥陀佛，一切以玄苦师弟之决为准。”",
+        "[Ch.4] “小师弟，坐这里。”",
+        "[Ch.5] “长得真不赖啊，以前看来也是养尊处优。”",
+        "[Ch.6] “这具身体似乎已经完成了‘百日筑基’？”",
+        "[Ch.7] “藏经阁？”",
+        "[Ch.8] “兀那小和尚，屋子里有些脏，你来打扫下。”",
+        "[Ch.9] “这是哪里……”"
+      ]
     },
     "jiang_zhiwei": {
       "name": "Giang Chỉ Vi",
-      "aliases": ["Chỉ Vi muội muội", "Kiếm Xuất Vô Hối", "Tẩy Kiếm Các đệ tử"],
+      "aliases": [
+        "Chỉ Vi muội muội",
+        "Kiếm Xuất Vô Hối",
+        "Tẩy Kiếm Các đệ tử"
+      ],
       "gender": "Nữ",
-      "personality": "Kiếm tâm thuần túy, hào sảng hiệp khí, kiếm xuất vô hối, chỗ dựa sinh tử của đồng đội."
+      "first_seen_chapter": 8,
+      "total_mentions": 418,
+      "personality": "Kiếm tâm thuần túy, hào sảng hiệp khí, kiếm xuất vô hối, chỗ dựa sinh tử của đồng đội.",
+      "key_dialogue_samples": [
+        "[Ch.8] “你倒像个世家公子，而不是小和尚，该称呼女施主的。”",
+        "[Ch.9] “清景，先别急着下结论，再检查下雕像后面，再看看事情发展。”",
+        "[Ch.10] “这上面有很多神功，我都没听说过……”",
+        "[Ch.11] “装神弄鬼。”",
+        "[Ch.12] “真的死了……”",
+        "[Ch.13] “乱拳打死老师傅……”",
+        "[Ch.14] “戚夏拯救丁长生脱离了被夺心丸控制的苦海，完成支线任务之一，奖励十个善功。”",
+        "[Ch.15] “后跳二。”"
+      ]
     },
     "gu_xiaosang": {
       "name": "Cố Tiểu Tang",
-      "aliases": ["Tiểu Tang", "Tố Nữ Đạo Thánh Nữ", "Yêu Nữ"],
+      "aliases": [
+        "Tiểu Tang",
+        "Tố Nữ Đạo Thánh Nữ",
+        "Yêu Nữ"
+      ],
       "gender": "Nữ",
-      "personality": "Thông minh giảo hoạt, miệng gọi 'Tướng công', tâm cơ thâm sâu giấu kín nỗi tuyệt vọng chống lại Kim Mẫu."
+      "first_seen_chapter": 32,
+      "total_mentions": 338,
+      "personality": "Thông minh giảo hoạt, miệng gọi 'Tướng công', tâm cơ thâm sâu giấu kín nỗi tuyệt vọng chống lại Kim Mẫu.",
+      "key_dialogue_samples": [
+        "[Ch.32] “小桑，小桑……”",
+        "[Ch.35] “小桑，小桑也来了……”",
+        "[Ch.36] “山下的施主，若看到朵儿察铁狼兵来袭，而山门不开，亦不会拼命，自会离去。”",
+        "[Ch.42] “小紫？别提那个笨蛋。”",
+        "[Ch.43] “这是妖术吗……”",
+        "[Ch.44] “咱们得合计一下兑换什么了，下一次的任务未必有心寂大师这样的帮手，也多半没有顾小桑这种莫名进入的家伙，所以尽量得靠自身。”",
+        "[Ch.45] “专心之道？”",
+        "[Ch.47] “我还没有正式下山行走江湖，不过因为之前那场论武和后来开了四窍的进步，叨陪末座。”"
+      ]
     },
     "qi_zhengyan": {
       "name": "Tề Chính Ngôn",
-      "aliases": ["Tề sư huynh", "Mặt đơ", "Ma Hoàng truyền nhân"],
+      "aliases": [
+        "Tề sư huynh",
+        "Mặt đơ",
+        "Ma Hoàng truyền nhân"
+      ],
       "gender": "Nam",
+      "first_seen_chapter": 9,
+      "total_mentions": 300,
       "personality": "Mặt lạnh ít nói, lý tưởng chúng sinh bình đẳng, cam chịu tiếng xấu Ma đạo để cứu giúp phàm nhân."
     },
     "ruan_yushu": {
       "name": "Nguyễn Ngọc Thư",
-      "aliases": ["Ngọc Thư", "Lang Nha Nguyễn Thị"],
+      "aliases": [
+        "Ngọc Thư",
+        "Lang Nha Nguyễn Thị"
+      ],
       "gender": "Nữ",
+      "first_seen_chapter": 168,
+      "total_mentions": 253,
       "personality": "Thanh nhã như tiên, bên ngoài lãnh đạm nhưng mê đồ ăn vặt, tiếng đàn Phượng Tê bảo hộ đồng đội."
+    },
+    "wang_siyuan": {
+      "name": "Vương Tư Viễn",
+      "aliases": [
+        "Toán Tận Thương Sinh",
+        "Vương gia quái thai"
+      ],
+      "gender": "Nam",
+      "first_seen_chapter": 152,
+      "total_mentions": 149,
+      "personality": "Mưu tính thâm sâu, thân thể yếu đuối hay ho ra máu nhưng tính kế cả giang hồ và Bỉ Ngạn."
     }
   }
 }
