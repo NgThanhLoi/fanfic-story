@@ -1,0 +1,11 @@
+{
+  "grand_arcs": [
+    {"arc_num": 1, "title": "Thiếu Lâm Tàng Kinh & Ẩn Hình Phường", "chapters": "1-50", "mastermind": "Ma Phật An Nan", "core_conflict": "Nhiệm vụ tân thủ Luân Hồi, tiếp nhận A Nan đao pháp."},
+    {"arc_num": 2, "title": "Giang Hồ Sơ Xuất & Nhân Bảng Tranh Phong", "chapters": "51-150", "mastermind": "Lục Đạo & Lục Đại Ma Môn", "core_conflict": "Danh hiệu Cuồng Đao Tô Mạnh, tiếp cận Cố Tiểu Tang."},
+    {"arc_num": 3, "title": "Cửu Trọng Thiên & Bá Vương Tuyệt Đao", "chapters": "151-300", "mastermind": "Thiên Đế tàn niệm", "core_conflict": "Đột phá Cửu Khiếu, nhận chủ Lôi Đao, Tề Chính Ngôn nhận Ma Hoàng truyền thừa."},
+    {"arc_num": 4, "title": "Đại Biến Thiếu Lâm & Xuất Sư Hoàn Tục", "chapters": "301-500", "mastermind": "Ma Phật & Huyền Bi", "core_conflict": "Thân thế bại lộ, chém đứt dây rối Thiếu Lâm, đột phá Ngoại Cảnh."},
+    {"arc_num": 5, "title": "Tiên Sinh Tóc Bạc & Nỗi Hận 10 Năm", "chapters": "501-800", "mastermind": "Kim Mẫu / Vô Sinh Lão Mẫu", "core_conflict": "Tiểu Tang tự vẫn đoạn tuyệt Kim Mẫu, Mạnh Kỳ tóc bạc ôm hận giang hồ."},
+    {"arc_num": 6, "title": "Chứng Đạo Pháp Thân & Khai Thiên Ngọc Hư", "chapters": "801-1100", "mastermind": "Nguyên Thủy Thiên Tôn", "core_conflict": "Chứng đắc Nguyên Thủy Pháp Thân, phục sinh Cố Tiểu Tang, khai sáng Ngọc Hư."},
+    {"arc_num": 7, "title": "Mạt Thế Đại Kiếp & Bỉ Ngạn Tranh Đạo Quả", "chapters": "1101-1409", "mastermind": "Tam Thanh & Ma Phật", "core_conflict": "Đăng lâm Bỉ Ngạn, trảm sát Ma Phật An Nan, chứng đắc Đạo Quả siêu thoát."}
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "characters": {
+    "meng_qi": {
+      "name": "Mạnh Kỳ",
+      "aliases": ["Chân Định", "Cuồng Đao Tô Mạnh", "Tô Tử Viễn", "Tiểu Hòa Thượng", "Tô Tiên Sinh"],
+      "gender": "Nam",
+      "stages": {
+        "stage_1": {"chapters": "1-50", "title": "Chân Định", "tone": "Dí dỏm, sợ chết, lươn lẹo, thích trang bức."},
+        "stage_2": {"chapters": "51-200", "title": "Cuồng Đao Tô Mạnh", "tone": "Hào sảng, ngạo khí, đao ý cuồng bạo."},
+        "stage_3": {"chapters": "201-800", "title": "Tô Tiên Sinh", "tone": "Lãnh đạm, trầm mặc, tóc bạc mang hận."},
+        "stage_4": {"chapters": "801-1409", "title": "Ngọc Hư Chưởng Giáo", "tone": "Uy nghiêm, thấu triệt nhân quả, chấp chưởng Côn Luân."}
+      }
+    },
+    "jiang_zhiwei": {
+      "name": "Giang Chỉ Vi",
+      "aliases": ["Chỉ Vi muội muội", "Kiếm Xuất Vô Hối", "Tẩy Kiếm Các đệ tử"],
+      "gender": "Nữ",
+      "personality": "Kiếm tâm thuần túy, hào sảng hiệp khí, kiếm xuất vô hối, chỗ dựa sinh tử của đồng đội."
+    },
+    "gu_xiaosang": {
+      "name": "Cố Tiểu Tang",
+      "aliases": ["Tiểu Tang", "Tố Nữ Đạo Thánh Nữ", "Yêu Nữ"],
+      "gender": "Nữ",
+      "personality": "Thông minh giảo hoạt, miệng gọi 'Tướng công', tâm cơ thâm sâu giấu kín nỗi tuyệt vọng chống lại Kim Mẫu."
+    },
+    "qi_zhengyan": {
+      "name": "Tề Chính Ngôn",
+      "aliases": ["Tề sư huynh", "Mặt đơ", "Ma Hoàng truyền nhân"],
+      "gender": "Nam",
+      "personality": "Mặt lạnh ít nói, lý tưởng chúng sinh bình đẳng, cam chịu tiếng xấu Ma đạo để cứu giúp phàm nhân."
+    },
+    "ruan_yushu": {
+      "name": "Nguyễn Ngọc Thư",
+      "aliases": ["Ngọc Thư", "Lang Nha Nguyễn Thị"],
+      "gender": "Nữ",
+      "personality": "Thanh nhã như tiên, bên ngoài lãnh đạm nhưng mê đồ ăn vặt, tiếng đàn Phượng Tê bảo hộ đồng đội."
+    }
+  }
+}

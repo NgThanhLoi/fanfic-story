@@ -1,0 +1,15 @@
+{
+  "realms": {
+    "Chân Thực Giới": "Thế giới bản nguyên trung tâm chư thiên, nơi quy tắc kiên cố nhất. Gồm Đại Tấn, Bắc Hoang, Tây Vực, Nam Hoang, Đông Hải.",
+    "Cửu Trọng Thiên": "Di tích Thiên Đình cổ đại, nơi Thiên Đế cùng Lôi Thần từng ngự trị, ẩn chứa các bí cảnh thần thông.",
+    "Cửu U": "Thế giới ma đạo u ám, nơi Ma Hoàng, U Minh Huyết Hải và các đại ma sinh sống.",
+    "Côn Luân Sơn Ngọc Hư Cung": "Đạo tràng cổ xưa của Nguyên Thủy Thiên Tôn, phiêu bạt ngoài dòng thời gian."
+  },
+  "travel_mechanics": {
+    "Bách Nhật Trúc Cơ / Súc Khí": "Đi bộ hoặc xe ngựa (20-40 dặm/ngày).",
+    "Khai Khiếu (1-9 khiếu)": "Khinh công tuyệt đỉnh hoặc ngựa quý (100-300 dặm/ngày).",
+    "Ngoại Cảnh (Thiên Nhân Hợp Nhất)": "Ngự phong phi hành, vượt ngàn dặm trong vài canh giờ.",
+    "Pháp Thân (Nhân Tiên -> Thiên Tiên)": "Xé rách hư không, di chuyển tức thời giữa các châu quận.",
+    "Bỉ Ngạn": "Vượt thoát dòng thời gian, vô sở bất tại (có mặt khắp mọi nơi)."
+  }
+}
