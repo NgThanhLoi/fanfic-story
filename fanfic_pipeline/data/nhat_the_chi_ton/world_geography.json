@@ -1,15 +1,21 @@
 {
-  "realms": {
-    "Chân Thực Giới": "Thế giới bản nguyên trung tâm chư thiên, nơi quy tắc kiên cố nhất. Gồm Đại Tấn, Bắc Hoang, Tây Vực, Nam Hoang, Đông Hải.",
-    "Cửu Trọng Thiên": "Di tích Thiên Đình cổ đại, nơi Thiên Đế cùng Lôi Thần từng ngự trị, ẩn chứa các bí cảnh thần thông.",
-    "Cửu U": "Thế giới ma đạo u ám, nơi Ma Hoàng, U Minh Huyết Hải và các đại ma sinh sống.",
-    "Côn Luân Sơn Ngọc Hư Cung": "Đạo tràng cổ xưa của Nguyên Thủy Thiên Tôn, phiêu bạt ngoài dòng thời gian."
+  "top_locations_presence": {
+    "Cửu Trọng Thiên (Thiên Đình)": 326,
+    "Cửu U (Ma Giới)": 289,
+    "Côn Luân Sơn Ngọc Hư Cung": 283,
+    "Thiếu Lâm Tự (Hà Nam)": 259,
+    "Thần Đô (Đại Tấn Hoàng Triều)": 240,
+    "Tây Vực Ma Địa": 138,
+    "Tẩy Kiếm Các (Giang Nam)": 131,
+    "Bắc Hoang Thảo Nguyên": 112,
+    "Lang Nha Nguyễn Thị (Giang Đông)": 71,
+    "Huyền Thiên Tông (Trung Nguyên)": 60,
+    "Chân Võ Tông (Võ Đang)": 58
   },
-  "travel_mechanics": {
-    "Bách Nhật Trúc Cơ / Súc Khí": "Đi bộ hoặc xe ngựa (20-40 dặm/ngày).",
-    "Khai Khiếu (1-9 khiếu)": "Khinh công tuyệt đỉnh hoặc ngựa quý (100-300 dặm/ngày).",
-    "Ngoại Cảnh (Thiên Nhân Hợp Nhất)": "Ngự phong phi hành, vượt ngàn dặm trong vài canh giờ.",
-    "Pháp Thân (Nhân Tiên -> Thiên Tiên)": "Xé rách hư không, di chuyển tức thời giữa các châu quận.",
-    "Bỉ Ngạn": "Vượt thoát dòng thời gian, vô sở bất tại (có mặt khắp mọi nơi)."
+  "travel_times": {
+    "Thiếu Lâm -> Lạc Dương": "Khai Khiếu: 3 ngày ngựa; Ngoại Cảnh: 2 canh giờ.",
+    "Thần Đô -> Giang Đông": "Khai Khiếu: 7 ngày thuyền/ngựa; Ngoại Cảnh: nửa ngày.",
+    "Thần Đô -> Bắc Hoang": "Khai Khiếu: 15 ngày; Ngoại Cảnh: 1 ngày.",
+    "Chân Thực Giới -> Cửu Trọng Thiên": "Cần mở thông đạo Cửu Trọng Thiên hoặc dùng Lôi Đao phá giới."
   }
 }

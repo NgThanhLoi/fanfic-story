@@ -1,20 +1,16 @@
 {
-  "chinh_dao": {
-    "Thiếu Lâm Tự": "Đệ nhất Phật môn, sở hữu Như Lai Thần Chưởng tàn thiên và 72 tuyệt kỹ.",
-    "Tẩy Kiếm Các": "Tô Vô Danh, Giang Chỉ Vi - Kiếm đạo chí thuần, Kiếm Xuất Vô Hối.",
-    "Chân Võ Tông": "Trương Tam Phong / Đạo Đức Thiên Tôn truyền thừa, Thái Cực Thần Công.",
-    "Huyền Thiên Tông": "Thiên Đế truyền thừa, chấp chưởng Thời Gian Chi Đao.",
-    "Lang Nha Nguyễn Thị": "Nguyễn Ngọc Thư - Âm luật cầm đạo thế gia, Phượng Tê Cầm."
-  },
-  "ma_mon": {
-    "Tố Nữ Đạo": "Cố Tiểu Tang, Vô Sinh Lão Mẫu - Mị thuật và Thiên Ma Thập Bát Thức.",
-    "Diệt Thiên Môn": "Lục Đạo Ma Quân - Diệt Thiên Ma Đao sát phạt.",
-    "Hoan Hỷ Thiền": "Tà Thiền bí thuật, âm dương thải bổ.",
-    "Huyết Hải Giáo": "U Minh Huyết Hải, Hóa Huyết Thần Đao."
+  "factions": {
+    "Thiếu Lâm Tự": "Đệ nhất Phật môn (Phương trượng Không Văn, Huyền Bi, Chân Định/Mạnh Kỳ).",
+    "Tẩy Kiếm Các": "Đệ nhất kiếm phái (Tô Vô Danh, Giang Chỉ Vi).",
+    "Chân Võ Tông": "Đạo môn chính tông (Trương Tam Phong truyền thừa).",
+    "Huyền Thiên Tông": "Thiên Đế truyền thừa, Thời Gian Chi Đao.",
+    "Tố Nữ Đạo": "Lục Đại Ma Môn (Cố Tiểu Tang, Vô Sinh Lão Mẫu).",
+    "Diệt Thiên Môn": "Diệt Thiên Ma Đao sát phạt.",
+    "Lang Nha Nguyễn Thị": "Cầm đạo âm luật (Nguyễn Ngọc Thư)."
   },
   "masterminds": {
-    "Ma Phật An Nan": "Đại phản diện số 1, ẩn thân thao túng Lục Đạo Luân Hồi, chọn Mạnh Kỳ làm đạo tiêu.",
-    "Vô Sinh Lão Mẫu (Kim Mẫu)": "Đại năng Bỉ Ngạn, nuôi dưỡng Cố Tiểu Tang như một thân thể thay thế.",
-    "Tam Thanh": "Nguyên Thủy, Linh Bảo, Đạo Đức - Bố trí Mạnh Kỳ gánh vác nhân quả để siêu thoát Đạo Quả."
+    "Ma Phật An Nan": "Chủ mưu Lục Đạo, biến Mạnh Kỳ thành đạo tiêu trùng sinh.",
+    "Vô Sinh Lão Mẫu": "Bỉ Ngạn đại năng, khống chế Cố Tiểu Tang.",
+    "Tam Thanh": "Nguyên Thủy, Linh Bảo, Đạo Đức - Bố cục Mạnh Kỳ gánh vác nhân quả siêu thoát."
   }
 }
