@@ -97,8 +97,9 @@ class TopicDeepScanner:
             }
 
         # 2. Dynamic regex mining across all 1409 chapters
-        pattern = re.compile(r"[\u4e00-\u9fa5]{2,6}(?:剑法|刀法|神掌|神功|真经|秘典|玄功|心法|神拳|指法|步法|绝技|魔功|雷法|剑诀|刀诀|剑经|琴谱|阵法|秘术|天功|掌法|棍法|枪法|锤法|神指|身法|化诀|奇功)")
+        pattern = re.compile(r"[\u4e00-\u9fa5]{2,6}(?:剑法|刀法|神掌|神功|真经|秘典|玄功|心法|神拳|指法|步法|绝技|魔功|雷法|剑诀|刀诀|剑经|琴谱|阵法|秘术|天功|掌法|棍法|枪法|锤法|神指|身法|化诀|奇功|大法)")
         stop_chars = set("的是和了在与他我你之被把各种等门套招门有这那几本所修炼以展开")
+
 
         for chunk in self.canon_store.chunks.values():
             text = chunk.get("text", "")
