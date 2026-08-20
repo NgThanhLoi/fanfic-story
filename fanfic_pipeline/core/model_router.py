@@ -121,11 +121,13 @@ class LLMInvoker:
             if config.api_key_env.startswith("cpa-") or config.api_key_env.startswith("sk-") or len(config.api_key_env) > 15:
                 api_key = config.api_key_env
 
-        base_url = (base_url or "https://api.openai.com/v1").removesuffix("/chat/completions").rstrip("/")
+        raw_url = config.base_url or os.environ.get("CLIPROXY_BASE_URL", "http://47.237.140.200/v1")
+        base_url = raw_url.removesuffix("/chat/completions").rstrip("/")
         if not base_url.endswith("/v1") and "/v1" not in base_url:
             base_url = f"{base_url}/v1"
 
         endpoint = f"{base_url}/chat/completions"
+
 
         headers = {
             "Content-Type": "application/json",

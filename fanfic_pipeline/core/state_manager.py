@@ -52,9 +52,17 @@ class ProjectStateManager:
         _atomic_write(self.meta_path, meta)
         with open(self.pod_path, "w", encoding="utf-8") as f: json.dump(pod.model_dump(), f, ensure_ascii=False, indent=2)
         with open(self.voices_path, "w", encoding="utf-8") as f: json.dump({k: v.model_dump() for k,v in voices.items()}, f, ensure_ascii=False, indent=2)
-        with open(self.relationship_path, "w", encoding="utf-8") as f: json.dump([r.model_dump() for r in relationships], f, ensure_ascii=False, indent=2)
-        initial_state = {"current_location": "Không gian Lục Đạo Luân Hồi", "active_characters": ["Mạnh Kỳ","Giang Chỉ Vi","Tề Chính Ngôn","Nguyễn Ngọc Thư"], "team_thien_cong": {"Mạnh Kỳ":100,"Giang Chỉ Vi":120,"Tề Chính Ngôn":90,"Nguyễn Ngọc Thư":110}, "unresolved_hooks": ["Thân phận thực sự của Lục Đạo","Bí ẩn sau lần trọng sinh của Mạnh Kỳ"], "timeline_stage": "Nhiệm vụ Luân Hồi Tân Thủ - Cảnh Khai Khiếu sơ kỳ", "branch_id": "main"}
+        active_chars = [v.name for v in voices.values()] if voices else ["Mạnh Kỳ"]
+        initial_state = {
+            "current_location": "Thiếu Lâm Tự - Thiền Tâm Viện",
+            "active_characters": active_chars,
+            "team_thien_cong": {c: 0 for c in active_chars},
+            "unresolved_hooks": ["Bí ẩn Lục Đạo", "Thân phận Tô Tử Viễn"],
+            "timeline_stage": "Giai đoạn 1: Thiếu Lâm Tạp Dịch (Ch.1-7)",
+            "branch_id": "main"
+        }
         _atomic_write(self.state_path, initial_state)
+
         # branches file
         _atomic_write(self.branches_path, {"main": {"from_chapter": 0, "from_branch": None, "created_at": "", "head": 0}})
 

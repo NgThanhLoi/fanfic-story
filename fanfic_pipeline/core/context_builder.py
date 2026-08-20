@@ -134,11 +134,24 @@ class ContextCompiler:
                 voice_lines.append("\n[QUAN HỆ NHÂN VẬT]:\n" + "\n".join(list(set(rel_lines))))
 
         character_lenses = "\n".join(voice_lines) if voice_lines else "Không có lens đặc biệt"
-
         if forbidden:
             character_lenses += f"\n[VÙNG CẤM TRI THỨC - CẤM ĐỂ LỘ]: {', '.join(forbidden)}"
-        canon_sec = "\n".join([f"- [{h.get('type','canon')}] {h.get('title','')}: {h.get('text','')[:400]}" for h in visible_canon]) if visible_canon else "Không có trích đoạn đặc biệt."
+
+        canon_lines = [f"- [{h.get('type','canon')}] {h.get('title','')}: {h.get('text','')[:400]}" for h in visible_canon]
+
+        try:
+            import os, json
+            syn_path = os.path.join(os.path.dirname(__file__), "..", "data", "nhat_the_chi_ton", "chapter_synopses_1410.json")
+            if os.path.exists(syn_path):
+                with open(syn_path, "r", encoding="utf-8") as f:
+                    syn_data = json.load(f)
+                    if 1 <= chapter_num <= len(syn_data):
+                        canon_lines.insert(0, f"- [CANON CHƯƠNG {chapter_num}] {syn_data[chapter_num-1].get('title','')}: {syn_data[chapter_num-1].get('summary','')}")
+        except Exception:
+            pass
+        canon_sec = "\n".join(canon_lines) if canon_lines else "Không có trích đoạn đặc biệt."
         memory_sec = "\n".join([f"- [Ch.{m.get('chapter',0)}] {m.get('topic','')}: {m.get('content','')[:300]}" for m in memory_hits]) if memory_hits else "Chưa có hồi ức liên quan."
+
         
         # Dynamic style contract from style system
         try:

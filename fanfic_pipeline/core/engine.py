@@ -63,46 +63,43 @@ class FanficEngine:
 
     def _domain_fallback_generate(self, system_prompt: str, user_prompt: str, response_format: str) -> str:
         if ("Tổng Đạo Diễn" in system_prompt) or "ChapterOutline" in user_prompt or response_format == "json":
+            ch_match = re.search(r'Chương\s*(\d+)', user_prompt)
+            ch_num = int(ch_match.group(1)) if ch_match else 1
+            syn_title = f"Chương {ch_num}"
+            syn_summary = "Diễn biến sự kiện nguyên tác tại mốc này."
+            try:
+                syn_path = os.path.join(os.path.dirname(__file__), "..", "data", "nhat_the_chi_ton", "chapter_synopses_1410.json")
+                if os.path.exists(syn_path):
+                    with open(syn_path, "r", encoding="utf-8") as f:
+                        syn_data = json.load(f)
+                        if 1 <= ch_num <= len(syn_data):
+                            syn_title = syn_data[ch_num - 1].get("title", syn_title)
+                            syn_summary = syn_data[ch_num - 1].get("summary", syn_summary)
+            except Exception:
+                pass
+            
+            voices = self.state_mgr.load_voices()
+            active_chars = [v.name for v in voices.values()] if voices else ["Mạnh Kỳ"]
             outline = {
-                "chapter_number": 1,
-                "title": "Luân Hồi Sơ Lâm, Đao Kiếm Tương Phùng",
-                "point_of_view": "Mạnh Kỳ (Tô Mạnh)",
-                "core_conflict": "Nhiệm vụ đầu tiên tại Ẩn Hình phường và cuộc chạm trán bất ngờ với sứ giả Ma môn Cố Tiểu Tang",
+                "chapter_number": ch_num,
+                "title": syn_title,
+                "point_of_view": active_chars[0],
+                "core_conflict": syn_summary[:100],
                 "scene_beats": [
                     {
                         "beat_number": 1,
                         "scene_type": "discovery",
-                        "characters_present": ["Mạnh Kỳ", "Giang Chỉ Vi", "Tề Chính Ngôn", "Nguyễn Ngọc Thư"],
-                        "a_plot_goal": "Tiểu đội tập hợp tại quảng trường Lục Đạo, phân tích bảng nhiệm vụ Ẩn Hình phường và mua sắm trang bị cơ bản.",
-                        "b_plot_goal": "Mạnh Kỳ cố giấu sự hoang mang bằng cách trêu đùa; Giang Chỉ Vi thể hiện kiếm tâm hào sảng; Ngọc Thư lén ăn cá khô tạo không khí gắn kết.",
-                        "key_event": "Tiểu đội Luân Hồi xác định mục tiêu ám sát thủ lĩnh sơn tặc nhưng phát hiện dấu vết công pháp Ma Môn.",
-                        "tension_element": "Quy tắc trừng phạt xóa sổ khắc nghiệt của Lục Đạo và số dư Thiện Công eo hẹp."
-                    },
-                    {
-                        "beat_number": 2,
-                        "scene_type": "action",
-                        "characters_present": ["Mạnh Kỳ", "Giang Chỉ Vi", "Tề Chính Ngôn"],
-                        "a_plot_goal": "Đột nhập sơn trại Ẩn Hình phường, giao tranh với đám hộ vệ Khai Khiếu cảnh.",
-                        "b_plot_goal": "Mạnh Kỳ phối hợp Lôi Đao với Kiếm thuật của Chỉ Vi; Tề Chính Ngôn âm thầm bọc lót phía sau.",
-                        "key_event": "Mạnh Kỳ dùng 'Đoạn Thanh Ti' trảm sát đầu mục hộ vệ, phát hiện mật thư có ký hiệu Tố Nữ Đạo.",
-                        "tension_element": "Kẻ địch có tu vi cao hơn dự kiến, sát khí dày đặc."
-                    },
-                    {
-                        "beat_number": 3,
-                        "scene_type": "emotional_climax",
-                        "characters_present": ["Mạnh Kỳ", "Cố Tiểu Tang"],
-                        "a_plot_goal": "Mạnh Kỳ đối mặt với Cố Tiểu Tang tại mật thất sơn trại, tranh đoạt lệnh bài cổ.",
-                        "b_plot_goal": "Cuộc đối đầu tâm lý cân não giữa lời trêu chọc ma mị của Tiểu Tang ('Tướng công') và sự cảnh giác cao độ của Mạnh Kỳ.",
-                        "key_event": "Cố Tiểu Tang để lại một câu nói lấp lửng về chân tướng Lục Đạo rồi biến mất, bỏ lại lệnh bài cho Mạnh Kỳ.",
-                        "tension_element": "Tình cảm mập mờ xen lẫn nguy cơ trí mạng từ thánh nữ Ma Môn."
+                        "characters_present": active_chars[:3],
+                        "a_plot_goal": f"Khởi đầu: {syn_summary[:60]}",
+                        "b_plot_goal": "Tương tác và thể hiện khẩu khí chuẩn xác.",
+                        "key_event": "Biến cố bắt đầu phát triển.",
+                        "tension_element": "Nguy cơ từ quy tắc thế giới và kẻ địch."
                     }
                 ],
-                "foreshadowing_hooks": [
-                    "Ký hiệu bí mật của Tố Nữ Đạo trong nhiệm vụ tân thủ",
-                    "Lý do Cố Tiểu Tang biết trước hành tung của tiểu đội Luân Hồi"
-                ]
+                "foreshadowing_hooks": [f"Manh mối từ {syn_title}"]
             }
             return json.dumps(outline, ensure_ascii=False)
+
 
         elif "Fandom Canon & OOC Critic" in system_prompt:
             critique = {
@@ -171,8 +168,26 @@ Thanh âm mềm mại như tơ lụa, nhưng lọt vào tai Mạnh Kỳ lại ch
             voices=voices
         )
 
+        # Load exact canon synopsis anchor for chapter_num
+        syn_title = f"Chương {chapter_num}"
+        syn_summary = ""
+        try:
+            syn_path = os.path.join(os.path.dirname(__file__), "..", "data", "nhat_the_chi_ton", "chapter_synopses_1410.json")
+            if os.path.exists(syn_path):
+                with open(syn_path, "r", encoding="utf-8") as f:
+                    syn_data = json.load(f)
+                    if 1 <= chapter_num <= len(syn_data):
+                        syn_title = syn_data[chapter_num - 1].get("title", syn_title)
+                        syn_summary = syn_data[chapter_num - 1].get("summary", "")
+        except Exception:
+            pass
+
         prompt = f"""
 {ctx_pkg.task_section}
+
+[MỐC NGUYÊN TÁC GỐC - CHƯƠNG {chapter_num}]:
+- Tiêu đề gốc: {syn_title}
+- Tóm tắt sự kiện gốc: {syn_summary}
 
 [TRẠNG THÁI HIỆN TẠI]
 {ctx_pkg.current_state_section}
@@ -215,23 +230,25 @@ Hãy lập ChapterOutline gồm: Tiêu đề chương, Góc nhìn (POV), Xung đ
             outline.chapter_number = chapter_num
             return outline
         except Exception:
+            active_chars = [v.name for v in voices.values()] if voices else ["Mạnh Kỳ"]
             return ChapterOutline(
                 chapter_number=chapter_num,
-                title=f"Chương {chapter_num}: Phong Vân Tái Khởi",
-                point_of_view="Mạnh Kỳ",
-                core_conflict="Đối đầu với thử thách Lục Đạo và bí mật Ma Môn",
+                title=f"{syn_title} (Fanfic Điểm Rẽ)",
+                point_of_view=active_chars[0],
+                core_conflict=syn_summary[:100] or "Phát triển biến cố phân nhánh",
                 scene_beats=[
                     SceneBeat(
                         beat_number=1,
-                        scene_type="action",
-                        characters_present=["Mạnh Kỳ", "Giang Chỉ Vi"],
-                        a_plot_goal="Giao tranh và thăm dò",
-                        b_plot_goal="Phối hợp tác chiến và thắt chặt tình bạn",
-                        key_event="Đột phá vòng vây",
-                        tension_element="Áp lực thời gian của Lục Đạo"
+                        scene_type="discovery",
+                        characters_present=active_chars[:3],
+                        a_plot_goal=f"Khởi đầu: {syn_summary[:50]}",
+                        b_plot_goal="Phối hợp tác chiến và giữ vững khẩu khí",
+                        key_event="Phát triển tình tiết",
+                        tension_element="Áp lực thời gian và quy tắc"
                     )
                 ]
             )
+
 
     def write_draft(self, outline: ChapterOutline, target_words: int = 2500, sealed_packet: Optional[SealedWriterPacket] = None) -> ChapterDraft:
         beats_str = "\n".join([f"Beat {b.beat_number} [{b.scene_type}]: A-Plot: {b.a_plot_goal} | B-Plot: {b.b_plot_goal} | Sự kiện: {b.key_event}" for b in outline.scene_beats])
@@ -407,10 +424,10 @@ Hãy đánh giá OOC Score (0-10), Canon Consistency Score (0-10), De-AI Score (
         return outline, draft, critique, state_delta
     def commit_chapter(self, chapter_num: int, draft: ChapterDraft, outline: ChapterOutline, state_delta: StateDelta, audit_receipt: Any = None, packet: Optional[SealedWriterPacket] = None, branch_id: str = "main") -> Dict[str,Any]:
         """Fail-closed commit: requires PASS receipt + hash binding (FR-40/41)."""
-        if audit_receipt is None:
-            ctx = AuditContext(chapter_num=chapter_num, draft_text=draft.content)
-            audit_receipt = self.audit_runner.evaluate(draft.content, ctx)
+        ctx = AuditContext(chapter_num=chapter_num, draft_text=draft.content)
+        audit_receipt = self.audit_runner.evaluate(draft.content, ctx)
         meta = self.state_mgr.load_project_meta()
 
         expected_head = meta.get("current_chapter", 0)
         return self.tx_mgr.commit_transaction(chapter_num, draft, outline, state_delta, expected_hash=self.state_mgr.calculate_draft_hash(draft.content), packet_hash=packet.packet_hash if packet else "", plan_hash="", audit_receipt=audit_receipt, branch_id=branch_id, expected_head=expected_head)
+
