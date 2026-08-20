@@ -7,16 +7,18 @@ from typing import Dict, List
 from fanfic_pipeline.core.models import CharacterVoice
 
 REALMS = {
-    "Trúc Cơ": "Bách Nhật Trúc Cơ, rèn luyện gân cốt khí huyết, tích lũy nội lực sơ khai.",
-    "Tích Khí": "Tụ khí đan điền, đả thông kinh mạch kỳ kinh bát mạch.",
-    "Khai Khiếu": "Mở cửu khiếu (Mắt, Tai, Mũi, Miệng, Tiền Âm, Hậu Âm). Tề Khiếu là viên mãn, bắt đầu cảm ứng thiên địa.",
-    "Bán Bộ Ngoại Cảnh": "Nội cảnh sơ thành, cảm ứng nội ngoại giao hòa, nắm giữ sát chiêu sơ bộ.",
-    "Ngoại Cảnh": "Thiên Nhân Hợp Nhất, dẫn động thiên địa nguyên khí, phân 1 đến 9 Trọng Thiên. Đỉnh phong là Thiên Tiên Bán Bộ.",
-    "Pháp Thân": "Thoát phàm nhập thánh, ngưng tụ Pháp Thân (Địa Tiên -> Thiên Tiên).",
-    "Truyền Thuyết": "Vô Sở Bất Tri, lưu lại truyền thuyết chư thiên, hình chiếu vạn giới.",
-    "Tạo Hóa": "Khổ hải trầm luân, cải tạo chư thiên, nắm giữ quy tắc đại đạo.",
-    "Bỉ Ngạn": "Đứng trên dòng thời gian, nắm giữ Đạo Quả, hồi tố quá khứ, nhìn thấu tương lai."
+    "Bách Nhật Trúc Cơ": "Bách Nhật Trúc Cơ (百日筑基): Rèn luyện gân cốt khí huyết, tích lũy nội lực sơ khai.",
+    "Thiền Định Súc Khí": "Thiền Định Súc Khí (禅定蓄气 / 蓄气): Tụ khí đan điền, đả thông kinh mạch kỳ kinh bát mạch.",
+    "Khai Khiếu": "Mở cửu khiếu (Mắt, Tai, Mũi, Miệng, Tiền Âm, Hậu Âm). Cửu khiếu tề khai là viên mãn, bắt đầu cảm ứng thiên địa.",
+    "Bán Bộ Ngoại Cảnh": "Nội cảnh sơ thành (Thiên Nhân Hợp Nhất / Thiên Nhân Hóa Sinh), cảm ứng nội ngoại giao hòa.",
+    "Ngoại Cảnh": "Dẫn động thiên địa nguyên khí, phân 1 đến 9 Trọng Thiên (Nhất Nhị Tam - Sơ kỳ, Tứ Ngũ Lục - Trung kỳ, Thất Bát Cửu - Tông Sư/Đại Tông Sư).",
+    "Bán Bộ Pháp Thân": "Chạm tới ngưỡng cửa Pháp Thân, nội cảnh diễn biến động thiên.",
+    "Pháp Thân": "Thoát phàm nhập thánh (Nhân Tiên -> Địa Tiên -> Thiên Tiên).",
+    "Truyền Thuyết": "Vô Sở Bất Tri, lưu lại truyền thuyết chư thiên, hình chiếu vạn giới (Thần Tiên).",
+    "Tạo Hóa": "Khổ hải trầm luân, cải tạo chư thiên, nắm giữ quy tắc đại đạo (Kim Tiên / Thái Ất).",
+    "Bỉ Ngạn": "Đứng trên dòng thời gian, nắm giữ Đạo Quả, hồi tố quá khứ, nhìn thấu tương lai (Đại La / Hỗn Nguyên)."
 }
+
 
 CHARACTER_VOICES: Dict[str, CharacterVoice] = {
     "meng_qi": CharacterVoice(

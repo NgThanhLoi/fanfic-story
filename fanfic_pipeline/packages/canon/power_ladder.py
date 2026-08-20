@@ -8,7 +8,7 @@ from fanfic_pipeline.packages.canon.alias_normalizer import normalize_fold
 REALM_ORDER = [
     # Giai đoạn 1: Hậu thiên / Trúc cơ
     "Bách Nhật Trúc Cơ",
-    "Tích Khí Kỳ",
+    "Súc Khí (Thiền Định Súc Khí)",
     # Giai đoạn 2: Khai Khiếu (1-9 khiếu)
     "Khai Khiếu (Sơ kỳ - 1-4 Khiếu)",
     "Khai Khiếu (Trung kỳ - 5-7 Khiếu)",
@@ -55,9 +55,10 @@ def rank_of(realm: str) -> int:
             return v
     # Substring heuristic
     if "truc co" in norm_target: return 0
-    if "tich khi" in norm_target: return 1
+    if "suc khi" in norm_target or "tich khi" in norm_target: return 1
     if "khai khieu" in norm_target:
         if "vien man" in norm_target or "cuu khieu" in norm_target: return 5
+
         if "hau ky" in norm_target: return 4
         if "trung ky" in norm_target: return 3
         return 2

@@ -83,12 +83,14 @@ class OCCreator:
         character_name: str,
         concept: str,
         role: str = "Thành viên tiểu đội Luân Hồi",
+        canon_context: str = "",
         router: Optional[PipelineModelRouter] = None
     ) -> Tuple[CharacterVoice, RelationshipState]:
+        canon_prompt_sec = f"\n[BỐI CẢNH CANON NGUYÊN TÁC & CẢNH GIỚI]:\n{canon_context}\n- Tu vi tuân thủ Power Ladder 26 bậc (Khai Khiếu 1-9 -> Ngoại Cảnh 1-9 Thiên -> Pháp Thân)." if canon_context else ""
         prompt = f"""Bạn là Chuyên Gia Thiết Kế Nhân Vật Đồng Nhân (OC Character Designer).
 Hãy tạo thiết lập nhân vật gốc (OC) [{character_name}] cho fanfic Nhất Thế Chi Tôn:
 - Ý tưởng cốt lõi: {concept}
-- Vai trò: {role}
+- Vai trò: {role}{canon_prompt_sec}
 
 Trả về JSON đúng cấu trúc:
 {{
@@ -111,6 +113,7 @@ Trả về JSON đúng cấu trúc:
 }}
 Chỉ xuất ra JSON hợp lệ.
 """
+
         cfg = router.architect_agent if router else AgentModelConfig(
             provider="cliproxyapi",
             model_name="deepseek-v4-flash-free",
