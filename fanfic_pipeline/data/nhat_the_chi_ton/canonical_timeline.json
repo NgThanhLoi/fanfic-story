@@ -1,45 +1,52 @@
 {
   "grand_arcs": [
     {
-      "arc": 1,
+      "arc_num": 1,
       "chapters": "1-50",
       "title": "Tân Thủ Luân Hồi & Thiếu Lâm Tàng Kinh",
+      "mastermind": "Ma Phật An Nan",
       "core_events": "Nhập Thiếu Lâm, Ẩn Hình Phường, kết bạn Chỉ Vi."
     },
     {
-      "arc": 2,
+      "arc_num": 2,
       "chapters": "51-150",
       "title": "Giang Hồ Sơ Xuất & Nhân Bảng Tranh Phong",
+      "mastermind": "Lục Đạo & Lục Đại Ma Môn",
       "core_events": "Cuồng Đao Tô Mạnh, Huyễn Hình Đại Pháp, gặp Tiểu Tang."
     },
     {
-      "arc": 3,
+      "arc_num": 3,
       "chapters": "151-300",
       "title": "Cửu Trọng Thiên & Lôi Đao Nhận Chủ",
+      "mastermind": "Thiên Đế tàn niệm",
       "core_events": "Đột phá Cửu Khiếu, Tề Chính Ngôn nhận Ma Hoàng truyền thừa."
     },
     {
-      "arc": 4,
+      "arc_num": 4,
       "chapters": "301-500",
       "title": "Đại Biến Thiếu Lâm & Xuất Sư Hoàn Tục",
+      "mastermind": "Ma Phật & Huyền Bi",
       "core_events": "Thân thế Tô Tử Viễn bại lộ, trảm đoạn Thiếu Lâm, chứng Ngoại Cảnh."
     },
     {
-      "arc": 5,
+      "arc_num": 5,
       "chapters": "501-800",
       "title": "Tiên Sinh Tóc Bạc & Nỗi Hận 10 Năm",
+      "mastermind": "Kim Mẫu / Vô Sinh Lão Mẫu",
       "core_events": "Tiểu Tang tự sát tuyệt mạng Kim Mẫu, Mạnh Kỳ tóc bạc ôm hận."
     },
     {
-      "arc": 6,
+      "arc_num": 6,
       "chapters": "801-1100",
       "title": "Chứng Đạo Pháp Thân & Ngọc Hư Chưởng Giáo",
+      "mastermind": "Nguyên Thủy Thiên Tôn",
       "core_events": "Chứng Bất Diệt Nguyên Thủy Pháp Thân, phục sinh Tiểu Tang."
     },
     {
-      "arc": 7,
+      "arc_num": 7,
       "chapters": "1101-1409",
       "title": "Mạt Thế Đại Kiếp & Bỉ Ngạn Tranh Đạo Quả",
+      "mastermind": "Tam Thanh & Ma Phật",
       "core_events": "Đăng lâm Bỉ Ngạn, trảm sát Ma Phật, chứng Đạo Quả siêu thoát."
     }
   ]

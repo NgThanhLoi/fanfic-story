@@ -2,9 +2,39 @@
   "characters": {
     "meng_qi": {
       "name": "Mạnh Kỳ",
+      "aliases": [
+        "Chân Định",
+        "Cuồng Đao Tô Mạnh",
+        "Tô Tử Viễn",
+        "Tiểu Hòa Thượng",
+        "Tô Tiên Sinh",
+        "Ngọc Hư Chưởng Giáo"
+      ],
+      "gender": "Nam",
       "first_seen_chapter": 2,
-      "last_seen_chapter": 1418,
       "total_mentions": 1357,
+      "stages": {
+        "stage_1": {
+          "chapters": "1-50",
+          "title": "Chân Định",
+          "tone": "Dí dỏm, sợ chết, lươn lẹo, thích trang bức."
+        },
+        "stage_2": {
+          "chapters": "51-200",
+          "title": "Cuồng Đao Tô Mạnh",
+          "tone": "Hào sảng, ngạo khí, đao ý cuồng bạo."
+        },
+        "stage_3": {
+          "chapters": "201-800",
+          "title": "Tô Tiên Sinh",
+          "tone": "Lãnh đạm, trầm mặc, tóc bạc mang hận báo thù."
+        },
+        "stage_4": {
+          "chapters": "801-1409",
+          "title": "Ngọc Hư Chưởng Giáo",
+          "tone": "Uy nghiêm, thấu triệt nhân quả, chấp chưởng Côn Luân."
+        }
+      },
       "sample_dialogues": [
         "[Ch.2] “二少爷，您醒了？”",
         "[Ch.3] “南无阿弥陀佛，一切以玄苦师弟之决为准。”",
@@ -13,50 +43,17 @@
         "[Ch.6] “这具身体似乎已经完成了‘百日筑基’？”"
       ]
     },
-    "zhen_hui": {
-      "name": "Chân Tuệ",
-      "first_seen_chapter": 2,
-      "last_seen_chapter": 1415,
-      "total_mentions": 73,
-      "sample_dialogues": [
-        "[Ch.2] “以后不要再用俗家姓名，你的法号是‘真慧’，入杂役院。”",
-        "[Ch.3] “我武道已毁，不便误人子弟，何敢收徒？玄心师弟，劳烦你让他们与真应、真观一屋。”",
-        "[Ch.4] “小师弟，坐这里。”",
-        "[Ch.5] “长得真不赖啊，以前看来也是养尊处优。”",
-        "[Ch.6] “小师弟，还没睡？”"
-      ]
-    },
-    "xuan_zhen": {
-      "name": "Huyền Chân",
-      "first_seen_chapter": 2,
-      "last_seen_chapter": 1079,
-      "total_mentions": 19,
-      "sample_dialogues": [
-        "[Ch.2] “心空无玄真，清净智慧深”",
-        "[Ch.7] “心空无玄真，清净智慧深”",
-        "[Ch.152] “刀气长河”",
-        "[Ch.275] “‘五方帝刀’清余八月十九入茂陵，于黄庭观静修。”",
-        "[Ch.407] “放下屠刀，亦能立地成佛。”"
-      ]
-    },
-    "an_nan": {
-      "name": "Ma Phật An Nan",
-      "first_seen_chapter": 4,
-      "last_seen_chapter": 1407,
-      "total_mentions": 389,
-      "sample_dialogues": [
-        "[Ch.4] “言归正传，还是先讲我少林寺。”",
-        "[Ch.6] “我少林刀法确实不多，但能与这三大刀法媲美的还是有一门，是七十二门绝技之中的‘阿难破戒刀法’，都属于能沟通天地法则的外景巅峰级绝学，当然，也得踏入‘外景’境界才能发挥这门刀法的真正威力。”",
-        "[Ch.10] “开窍级武学”",
-        "[Ch.29] “在神话时代之前，道尊佛祖就已经少见于世，若非几万年前魔佛欲灭佛门道统时，佛祖出手镇压，恐怕世人都以为他们也相继坐化了，而这种猜测的破灭，亦让所有强者看到了希望。”",
-        "[Ch.41] “这话倒是颇有几分玄奥……”"
-      ]
-    },
     "jiang_zhiwei": {
       "name": "Giang Chỉ Vi",
+      "aliases": [
+        "Chỉ Vi muội muội",
+        "Kiếm Xuất Vô Hối",
+        "Tẩy Kiếm Các đệ tử"
+      ],
+      "gender": "Nữ",
       "first_seen_chapter": 8,
-      "last_seen_chapter": 1414,
       "total_mentions": 418,
+      "personality": "Kiếm tâm thuần túy, hào sảng hiệp khí, kiếm xuất vô hối, chỗ dựa sinh tử của đồng đội.",
       "sample_dialogues": [
         "[Ch.8] “你倒像个世家公子，而不是小和尚，该称呼女施主的。”",
         "[Ch.9] “清景，先别急着下结论，再检查下雕像后面，再看看事情发展。”",
@@ -65,50 +62,17 @@
         "[Ch.12] “真的死了……”"
       ]
     },
-    "su_wuming": {
-      "name": "Tô Vô Danh",
-      "first_seen_chapter": 8,
-      "last_seen_chapter": 1343,
-      "total_mentions": 167,
-      "sample_dialogues": [
-        "[Ch.8] “洗剑阁的小姑娘赢了？不会又是一个苏无名吧，嘿嘿，小心刚极易折。”",
-        "[Ch.14] “英雄出少年，江姑娘你这手剑法足以称为大家了，哎，后浪推前浪，看到你等天资卓著的小友，我分外觉老，不知令师如何称呼？”",
-        "[Ch.15] “他们两位都是晚辈同门，地上这位亦是。”",
-        "[Ch.21] “有神秘力量从体内爆发，外接冥冥之力，果然非常人所能为，但既然体内有诅咒或类似的痕迹，我们自可以先清查一下彼此。”",
-        "[Ch.43] “有没有这个机会，先得问过我掌中之剑。”"
-      ]
-    },
-    "tian_di": {
-      "name": "Thiên Đế",
-      "first_seen_chapter": 8,
-      "last_seen_chapter": 1415,
-      "total_mentions": 226,
-      "sample_dialogues": [
-        "[Ch.8] “玄天宗自号天帝道统，就是这么个欺负小孩子的道统？”",
-        "[Ch.10] “长乐高氏的《心寂物外篇》和‘代天神拳’也有，兑换价格和《惊世书》相仿，都在十五万善功左右，比我宗门的《天帝玉册》足足少了二十五万，嘿，而且这还是残缺的《天帝玉册》。”",
-        "[Ch.17] “六道轮回之主”",
-        "[Ch.29] “所以，你们能够在这里用善功兑换到绝世武功、神兵利器、仙丹妙药，以及任何你们能够想到的事物。”",
-        "[Ch.107] “大同而小异，这里的传说是魔主闯九重天被仙人击杀，残躯落于地面，而我们世界的神话是，魔主率领九幽邪魔、魔界生灵，进攻天庭，掀起了滔天魔祸，最终被天帝用天道印击杀，而且魔界也毁于这一战，九幽从此隐于世间。”"
-      ]
-    },
-    "qi_zhengyan": {
-      "name": "Tề Chính Ngôn",
-      "first_seen_chapter": 9,
-      "last_seen_chapter": 1409,
-      "total_mentions": 300,
-      "sample_dialogues": [
-        "[Ch.9] “能蒙江姑娘记住，齐某不胜荣幸，在下是浣花剑派普通弟子齐正言，这次随行来到少林。”",
-        "[Ch.10] “我虽见识浅薄，但也觉得江姑娘说的在理。”",
-        "[Ch.11] “惭愧，蓄气大成已有五年，却始终无法开窍。”",
-        "[Ch.12] “这不是好兆头吗？至少在赶去中央大殿前，我们不用担心高手增援，不用担心堡主直接出手。”",
-        "[Ch.15] “这两位是？”"
-      ]
-    },
     "gu_xiaosang": {
       "name": "Cố Tiểu Tang",
+      "aliases": [
+        "Tiểu Tang",
+        "Tố Nữ Đạo Thánh Nữ",
+        "Yêu Nữ"
+      ],
+      "gender": "Nữ",
       "first_seen_chapter": 32,
-      "last_seen_chapter": 1418,
       "total_mentions": 338,
+      "personality": "Thông minh giảo hoạt, miệng gọi 'Tướng công', tâm cơ thâm sâu giấu kín nỗi tuyệt vọng chống lại Kim Mẫu.",
       "sample_dialogues": [
         "[Ch.32] “小桑，小桑……”",
         "[Ch.35] “小桑，小桑也来了……”",
@@ -117,111 +81,28 @@
         "[Ch.43] “这是妖术吗……”"
       ]
     },
-    "jin_mu": {
-      "name": "Vô Sinh Lão Mẫu",
-      "first_seen_chapter": 42,
-      "last_seen_chapter": 1418,
-      "total_mentions": 147,
-      "sample_dialogues": [
-        "[Ch.42] “红尘如狱，众生皆苦，轮回不止，忧患不休，怜我世人，有神天降，无生老母，真空家乡！”",
-        "[Ch.43] “无生老母，真空家乡！”",
-        "[Ch.47] “不知道，就算一体双魂，肉身基础也不会消失，我不可能看不出她会武功。”",
-        "[Ch.97] “可是无生老母转世的顾小桑，人榜第四？”",
-        "[Ch.104] “幸好此战之后，对方阵营大概的能力，我们都已知晓，日后不会再错估了，只是顾小桑不知掌握了《无生老母降世经》上多少神功绝学，绝对不能只注意无生指。”"
-      ]
-    },
-    "duan_xiangfei": {
-      "name": "Đoạn Hướng Phi",
-      "first_seen_chapter": 59,
-      "last_seen_chapter": 1132,
-      "total_mentions": 31,
-      "sample_dialogues": [
-        "[Ch.59] “法玄宗悲苦神僧，天定城崔栩城主，‘白衣剑神’洛青，‘寒冰神针’吴采莎，‘落雪刀’车婉秀，‘再世天魔’盖远，‘闲隐先生’段向非……”",
-        "[Ch.60] “人力有时而穷，天下之大，老朽无可奈何的事情数不胜数，至少这韶华易逝，美人白头，就非人力可以挽回，‘申猴’先生，老朽若非迫不得已，何曾愿意与你们‘十二相神’打交道？”",
-        "[Ch.62] “闲隐先生”",
-        "[Ch.63] “那日段公子送走少城主、总捕头后，并未立刻离开，而是与夜月调笑了几句，出门拐去了后面一处安静院落。他在那里还订了一桌酒席，宴请别的客人。”",
-        "[Ch.64] “为了不打草惊蛇，我让安成隐瞒了真相，但闲隐先生是知道这些的。”"
-      ]
-    },
-    "wang_siyuan": {
-      "name": "Vương Tư Viễn",
-      "first_seen_chapter": 152,
-      "last_seen_chapter": 1410,
-      "total_mentions": 149,
-      "sample_dialogues": [
-        "[Ch.152] “刀气长河”",
-        "[Ch.155] “勘虚剑法？朋友可是江东王氏之人？在下与王思远王兄有过一面之缘。”",
-        "[Ch.156] “算尽苍生”",
-        "[Ch.199] “听闻天外奇石丢过一次，是‘烈阳神掌’张知返在场时？”",
-        "[Ch.220] “大罗妖女排到第二了？超过了‘算尽苍生’和‘狼王’！”"
-      ]
-    },
-    "he_jiu": {
-      "name": [
-        "何九"
+    "qi_zhengyan": {
+      "name": "Tề Chính Ngôn",
+      "aliases": [
+        "Tề sư huynh",
+        "Mặt đơ",
+        "Ma Hoàng truyền nhân"
       ],
-      "first_seen_chapter": 152,
-      "last_seen_chapter": 1349,
-      "total_mentions": 64,
-      "sample_dialogues": [
-        "[Ch.241] “她应该随时可以打开生死玄关了，但自身强行压制，等待精气神意、肉体身躯和武功境界在这个阶段的圆满，以做完美突破，就像‘无形剑’何九一样。”",
-        "[Ch.275] “‘刀气长河’严冲于蓬州海边练刀。”",
-        "[Ch.283] “内外天地交汇，内景外显，肉身、元神随之改变，心灵升华，道基铸成，再无退路，故而有‘玄关无悔’之说。”",
-        "[Ch.388] “‘无形剑’何九设宴，邀请他后面近十位人榜才俊前往‘兴云庄’，此乃东海剑庄位于郢城的别院……”",
-        "[Ch.389] “姓名：苏孟，曾用法号真定。”"
-      ]
+      "gender": "Nam",
+      "first_seen_chapter": 9,
+      "total_mentions": 300,
+      "personality": "Mặt lạnh ít nói, lý tưởng chúng sinh bình đẳng, cam chịu tiếng xấu Ma đạo để cứu giúp phàm nhân."
     },
     "ruan_yushu": {
       "name": "Nguyễn Ngọc Thư",
+      "aliases": [
+        "Ngọc Thư",
+        "Lang Nha Nguyễn Thị"
+      ],
+      "gender": "Nữ",
       "first_seen_chapter": 168,
-      "last_seen_chapter": 1408,
       "total_mentions": 253,
-      "sample_dialogues": [
-        "[Ch.168] “琅琊阮氏阮玉书。”",
-        "[Ch.169] “刚才你的手段真是神鬼莫测，厉害！”",
-        "[Ch.170] “毒无常！”",
-        "[Ch.172] “他死了。”",
-        "[Ch.173] “成功护送陆观入京，主线任务一完成，每人奖励两百善功，安顿好后去潇湘楼，与罗胜衣一行会合，开启主线任务二。”"
-      ]
-    },
-    "dao_de": {
-      "name": "Đạo Đức Thiên Tôn",
-      "first_seen_chapter": 355,
-      "last_seen_chapter": 1405,
-      "total_mentions": 90,
-      "sample_dialogues": [
-        "[Ch.355] “原来如此。”",
-        "[Ch.370] “在某些轮回世界里，亦称灵宝天尊为通天教主。”",
-        "[Ch.425] “道门九尊也不行？”",
-        "[Ch.454] “嘿，仅仅是略得法身招式的皮毛，开窍期都没有几个，更别提参悟了。”",
-        "[Ch.506] “元始天尊，灵宝天尊，道德天尊……”"
-      ]
-    },
-    "ling_bao": {
-      "name": "Linh Bảo Thiên Tôn",
-      "first_seen_chapter": 355,
-      "last_seen_chapter": 1405,
-      "total_mentions": 134,
-      "sample_dialogues": [
-        "[Ch.355] “原来如此。”",
-        "[Ch.370] “灵宝天尊？莫非便是仙迹当前的首领。”",
-        "[Ch.371] “灵宝天尊曾言，上古可能有很长一段历史遗失，只有在轮回世界里才能找到蛛丝马迹，就连他都有很多不知，何况你？”",
-        "[Ch.373] “灵宝天尊”",
-        "[Ch.471] “正常九千，不过你从‘如来神掌’领悟出三门外景功法了，对灵宝天尊有不小用处，他会私人补贴一点，估计八千出头就能拿到。”"
-      ]
-    },
-    "yuan_shi": {
-      "name": "Nguyên Thủy Thiên Tôn",
-      "first_seen_chapter": 355,
-      "last_seen_chapter": 1410,
-      "total_mentions": 238,
-      "sample_dialogues": [
-        "[Ch.355] “原来如此。”",
-        "[Ch.357] “广成天尊”",
-        "[Ch.359] “元始天尊”",
-        "[Ch.370] “通天教主？”",
-        "[Ch.371] “可弟子是八九玄功，为什么师父却不是？”"
-      ]
+      "personality": "Thanh nhã như tiên, bên ngoài lãnh đạm nhưng mê đồ ăn vặt, tiếng đàn Phượng Tê bảo hộ đồng đội."
     }
   }
 }

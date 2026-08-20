@@ -1,12 +1,16 @@
 {
-  "factions": {
+  "chinh_dao": {
     "Thiếu Lâm Tự": "Đệ nhất Phật môn (Phương trượng Không Văn, Huyền Bi, Chân Định/Mạnh Kỳ).",
     "Tẩy Kiếm Các": "Đệ nhất kiếm phái (Tô Vô Danh, Giang Chỉ Vi).",
     "Chân Võ Tông": "Đạo môn chính tông (Trương Tam Phong truyền thừa).",
     "Huyền Thiên Tông": "Thiên Đế truyền thừa, Thời Gian Chi Đao.",
+    "Lang Nha Nguyễn Thị": "Cầm đạo âm luật (Nguyễn Ngọc Thư)."
+  },
+  "ma_mon": {
     "Tố Nữ Đạo": "Lục Đại Ma Môn (Cố Tiểu Tang, Vô Sinh Lão Mẫu).",
     "Diệt Thiên Môn": "Diệt Thiên Ma Đao sát phạt.",
-    "Lang Nha Nguyễn Thị": "Cầm đạo âm luật (Nguyễn Ngọc Thư)."
+    "Hoan Hỷ Thiền": "Tà Thiền bí thuật, âm dương thải bổ.",
+    "Huyết Hải Giáo": "U Minh Huyết Hải, Hóa Huyết Thần Đao."
   },
   "masterminds": {
     "Ma Phật An Nan": "Chủ mưu Lục Đạo, biến Mạnh Kỳ thành đạo tiêu trùng sinh.",

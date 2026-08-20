@@ -1,4 +1,136 @@
 {
+  "realms_26_tiers": [
+    {
+      "rank": 0,
+      "name": "Bách Nhật Trúc Cơ",
+      "desc": "Rèn luyện gân cốt khí huyết, đúc nền cơ thể."
+    },
+    {
+      "rank": 1,
+      "name": "Thiền Định Súc Khí",
+      "desc": "Tụ khí đan điền, đả thông kỳ kinh bát mạch."
+    },
+    {
+      "rank": 2,
+      "name": "Khai Khiếu (Sơ kỳ - 1-4 Khiếu)",
+      "desc": "Khai mở Mắt, Tai, Mũi."
+    },
+    {
+      "rank": 3,
+      "name": "Khai Khiếu (Trung kỳ - 5-7 Khiếu)",
+      "desc": "Khai mở Miệng, Tiền Âm, Hậu Âm."
+    },
+    {
+      "rank": 4,
+      "name": "Khai Khiếu (Hậu kỳ - 8-9 Khiếu)",
+      "desc": "Khai mở đầy đủ 9 khiếu cơ thể."
+    },
+    {
+      "rank": 5,
+      "name": "Khai Khiếu (Cửu Khiếu Tề Khai - Viên Mãn)",
+      "desc": "Nội khí viên mãn, chuẩn bị Thiên Nhân Giao Cảm."
+    },
+    {
+      "rank": 6,
+      "name": "Bán Bộ Ngoại Cảnh (Thiên Nhân Hợp Nhất)",
+      "desc": "Nội cảnh sơ thành, cảm ứng hòa nhập cùng thiên địa."
+    },
+    {
+      "rank": 7,
+      "name": "Ngoại Cảnh (Nhất Trọng Thiên)",
+      "desc": "Bắt đầu dẫn động thiên địa nguyên khí."
+    },
+    {
+      "rank": 8,
+      "name": "Ngoại Cảnh (Nhị Trọng Thiên)",
+      "desc": "Nguyên khí ngưng tụ, uy lực tăng gấp bội."
+    },
+    {
+      "rank": 9,
+      "name": "Ngoại Cảnh (Tam Trọng Thiên)",
+      "desc": "Sơ bộ chưởng khống thiên địa quy tắc."
+    },
+    {
+      "rank": 10,
+      "name": "Ngoại Cảnh (Tứ Trọng Thiên)",
+      "desc": "Ngoại Cảnh trung giai, ngự không phi hành thuần thục."
+    },
+    {
+      "rank": 11,
+      "name": "Ngoại Cảnh (Ngũ Trọng Thiên)",
+      "desc": "Hóa sinh dị tượng thiên địa."
+    },
+    {
+      "rank": 12,
+      "name": "Ngoại Cảnh (Lục Trọng Thiên)",
+      "desc": "Đỉnh phong trung giai, sát chiêu toái sơn đoạn giang."
+    },
+    {
+      "rank": 13,
+      "name": "Ngoại Cảnh (Thất Trọng Thiên - Tông Sư)",
+      "desc": "Danh xưng Tông Sư võ lâm, độc bộ giang hồ."
+    },
+    {
+      "rank": 14,
+      "name": "Ngoại Cảnh (Bát Trọng Thiên - Đại Tông Sư)",
+      "desc": "Danh xưng Đại Tông Sư, trụ cột các đại thế lực."
+    },
+    {
+      "rank": 15,
+      "name": "Ngoại Cảnh (Cửu Trọng Thiên - Đỉnh Phong)",
+      "desc": "Chạm tới ngưỡng cửa Pháp Thân."
+    },
+    {
+      "rank": 16,
+      "name": "Bán Bộ Pháp Thân",
+      "desc": "Nội cảnh diễn biến động thiên, chuẩn bị độ kiếp."
+    },
+    {
+      "rank": 17,
+      "name": "Pháp Thân (Nhân Tiên)",
+      "desc": "Thoát phàm nhập thánh, ngưng tụ Pháp Thân sơ giai."
+    },
+    {
+      "rank": 18,
+      "name": "Pháp Thân (Địa Tiên)",
+      "desc": "Địa Tiên cảnh giới, thọ nguyên ngàn năm."
+    },
+    {
+      "rank": 19,
+      "name": "Pháp Thân (Thiên Tiên)",
+      "desc": "Thiên Tiên chí tôn, xé rách hư không chư thiên."
+    },
+    {
+      "rank": 20,
+      "name": "Bán Bộ Truyền Thuyết",
+      "desc": "Bắt đầu cảm ứng hình chiếu vạn giới."
+    },
+    {
+      "rank": 21,
+      "name": "Truyền Thuyết Cảnh",
+      "desc": "Vô Sở Bất Tri, hình chiếu khắp vạn giới (Thần Tiên)."
+    },
+    {
+      "rank": 22,
+      "name": "Tạo Hóa Cảnh",
+      "desc": "Khổ hải trầm luân, cải tạo chư thiên (Kim Tiên / Thái Ất)."
+    },
+    {
+      "rank": 23,
+      "name": "Bán Bộ Bỉ Ngạn",
+      "desc": "Chạm tới bờ bên kia dòng thời gian."
+    },
+    {
+      "rank": 24,
+      "name": "Bỉ Ngạn Cảnh",
+      "desc": "Đứng trên dòng thời gian, hồi tố quá khứ (Đại La / Hỗn Nguyên)."
+    },
+    {
+      "rank": 25,
+      "name": "Đạo Quả (Siêu Thoát)",
+      "desc": "Vượt thoát tất cả, chân chính bất khả tư nghị."
+    }
+  ],
   "top_mined_techniques": {
     "八九玄功": 160,
     "如来神掌": 116,
@@ -172,83 +304,5 @@
     "霹雳剑": 17,
     "虚空印": 17,
     "落雪刀": 16
-  },
-  "realms_26_tiers": [
-    {
-      "rank": 0,
-      "name": "Bách Nhật Trúc Cơ"
-    },
-    {
-      "rank": 1,
-      "name": "Thiền Định Súc Khí"
-    },
-    {
-      "rank": 2,
-      "name": "Khai Khiếu (1-4 Khiếu: Mắt, Tai, Mũi)"
-    },
-    {
-      "rank": 3,
-      "name": "Khai Khiếu (5-7 Khiếu: Miệng, Tiền Âm, Hậu Âm)"
-    },
-    {
-      "rank": 4,
-      "name": "Khai Khiếu (8-9 Khiếu: Cửu Khiếu Tề Khai)"
-    },
-    {
-      "rank": 5,
-      "name": "Bán Bộ Ngoại Cảnh (Thiên Nhân Hợp Nhất)"
-    },
-    {
-      "rank": 6,
-      "name": "Ngoại Cảnh (1-3 Trọng Thiên - Sơ kỳ)"
-    },
-    {
-      "rank": 7,
-      "name": "Ngoại Cảnh (4-6 Trọng Thiên - Trung kỳ)"
-    },
-    {
-      "rank": 8,
-      "name": "Ngoại Cảnh (7 Trọng Thiên - Tông Sư)"
-    },
-    {
-      "rank": 9,
-      "name": "Ngoại Cảnh (8 Trọng Thiên - Đại Tông Sư)"
-    },
-    {
-      "rank": 10,
-      "name": "Ngoại Cảnh (9 Trọng Thiên - Đỉnh Phong)"
-    },
-    {
-      "rank": 11,
-      "name": "Bán Bộ Pháp Thân"
-    },
-    {
-      "rank": 12,
-      "name": "Pháp Thân (Nhân Tiên)"
-    },
-    {
-      "rank": 13,
-      "name": "Pháp Thân (Địa Tiên)"
-    },
-    {
-      "rank": 14,
-      "name": "Pháp Thân (Thiên Tiên)"
-    },
-    {
-      "rank": 15,
-      "name": "Truyền Thuyết Cảnh (Thần Tiên)"
-    },
-    {
-      "rank": 16,
-      "name": "Tạo Hóa Cảnh (Kim Tiên / Thái Ất)"
-    },
-    {
-      "rank": 17,
-      "name": "Bỉ Ngạn Cảnh (Đại La / Hỗn Nguyên)"
-    },
-    {
-      "rank": 18,
-      "name": "Đạo Quả (Siêu Thoát)"
-    }
-  ]
+  }
 }

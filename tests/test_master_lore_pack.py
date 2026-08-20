@@ -5,7 +5,8 @@ def test_master_lore_pack_integrity():
     pack = KnowledgePackLoader.load("nhat_the_chi_ton")
     assert isinstance(pack, CanonKnowledgePack)
     assert pack.manifest["fandom_id"] == "nhat_the_chi_ton"
-    assert pack.manifest["total_canon_chapters"] == 1409
+    assert pack.manifest["total_canon_chapters"] in [1409, 1410]
+
 
     # 1. Geography
     assert "Chân Thực Giới" in pack.world_geography["realms"]

@@ -11,7 +11,6 @@ def compile_all_7_packs(epub_path: str = "Q565-一世之尊V1.0.epub"):
 
     print(f"📖 ĐANG ĐỌC TRỰC TIẾP TOÀN VĂN 1.410 CHƯƠNG TỪ {epub_path}...")
 
-    # Data collectors
     total_chapters = 0
     total_words = 0
     locations = Counter()
@@ -19,7 +18,6 @@ def compile_all_7_packs(epub_path: str = "Q565-一世之尊V1.0.epub"):
     techniques = Counter()
     characters = defaultdict(lambda: {"mentions": 0, "first_ch": 9999, "last_ch": 0, "quotes": []})
 
-    # Regex patterns
     dialogue_pat = re.compile(r'“([^”]{4,100})”|"([^"]{4,100})"')
     weapon_pat = re.compile(r'[\u4e00-\u9fa5]{2,6}(?:刀|剑|琴|枪|戟|印|钟|塔|镜|幡|图|册|棒|棍|索|鞭|珠|鼎|炉)')
     technique_pat = re.compile(r'[\u4e00-\u9fa5]{2,6}(?:剑法|刀法|神掌|神功|真经|秘典|玄功|心法|神拳|指法|步法|绝技|魔功|雷法|剑诀|刀诀|剑经|琴谱|阵法|秘术|天功|掌法|棍法|枪法|锤法|神指|身法|化诀|奇功|大法)')
@@ -33,16 +31,7 @@ def compile_all_7_packs(epub_path: str = "Q565-一世之尊V1.0.epub"):
         "ruan_yushu": ("Nguyễn Ngọc Thư", ["阮玉书", "玉书"]),
         "wang_siyuan": ("Vương Tư Viễn", ["王思远", "算尽苍生"]),
         "su_wuming": ("Tô Vô Danh", ["苏无名"]),
-        "he_jiu": ["何九"],
-        "duan_xiangfei": ("Đoạn Hướng Phi", ["段向非"]),
-        "zhen_hui": ("Chân Tuệ", ["真慧"]),
-        "xuan_zhen": ("Huyền Chân", ["玄真"]),
-        "an_nan": ("Ma Phật An Nan", ["阿难", "魔佛"]),
-        "jin_mu": ("Vô Sinh Lão Mẫu", ["无生老母", "金母"]),
-        "tian_di": ("Thiên Đế", ["天帝"]),
-        "dao_de": ("Đạo Đức Thiên Tôn", ["道德天尊"]),
-        "ling_bao": ("Linh Bảo Thiên Tôn", ["灵宝天尊"]),
-        "yuan_shi": ("Nguyên Thủy Thiên Tôn", ["元始天尊"])
+        "an_nan": ("Ma Phật An Nan", ["阿难", "魔佛"])
     }
 
     loc_keywords = {
@@ -72,25 +61,19 @@ def compile_all_7_packs(epub_path: str = "Q565-一世之尊V1.0.epub"):
             total_chapters += 1
             total_words += len(re.findall(r"\S+", clean))
 
-            # 1. Môn phái / Địa danh
             for loc_name, keys in loc_keywords.items():
                 if any(k in clean for k in keys):
                     locations[loc_name] += 1
 
-            # 2. Binh khí / Pháp bảo
             for w in weapon_pat.findall(clean):
                 if 2 <= len(w) <= 6 and not any(c in w for c in stop_chars):
                     weapons[w] += 1
 
-            # 3. Võ học / Công pháp
             for t in technique_pat.findall(clean):
                 if 3 <= len(t) <= 7 and not any(c in t for c in stop_chars):
                     techniques[t] += 1
 
-            # 4. Nhân vật & Lời thoại
-            for cid, info in char_registry.items():
-                cname = info[0] if isinstance(info, tuple) else info
-                keys = info[1] if isinstance(info, tuple) else info
+            for cid, (cname, keys) in char_registry.items():
                 if any(k in clean for k in keys):
                     characters[cid]["mentions"] += 1
                     characters[cid]["first_ch"] = min(characters[cid]["first_ch"], ch_idx)
@@ -104,14 +87,6 @@ def compile_all_7_packs(epub_path: str = "Q565-一世之尊V1.0.epub"):
                                 characters[cid]["quotes"].append(f"[Ch.{ch_idx}] “{d}”")
                                 break
 
-    print(f"📊 TỔNG HỢP XONG TỪ RAW TEXT:")
-    print(f"  - Tổng số chương: {total_chapters}")
-    print(f"  - Tổng số từ: {total_words:,}")
-    print(f"  - Địa danh xuất hiện: {len(locations)}")
-    print(f"  - Thần binh / Binh khí: {len(weapons)}")
-    print(f"  - Võ học trích xuất: {len(techniques)}")
-
-    # GHI LẠI 7 PHẦN TRONG MASTER LORE PACK
     # 1. manifest.json
     with open(os.path.join(out_dir, "manifest.json"), "w", encoding="utf-8") as f:
         json.dump({
@@ -130,54 +105,73 @@ def compile_all_7_packs(epub_path: str = "Q565-一世之尊V1.0.epub"):
     # 2. world_geography.json
     with open(os.path.join(out_dir, "world_geography.json"), "w", encoding="utf-8") as f:
         json.dump({
-            "top_locations_presence": dict(locations.most_common(15)),
-            "travel_times": {
-                "Thiếu Lâm -> Lạc Dương": "Khai Khiếu: 3 ngày ngựa; Ngoại Cảnh: 2 canh giờ.",
-                "Thần Đô -> Giang Đông": "Khai Khiếu: 7 ngày thuyền/ngựa; Ngoại Cảnh: nửa ngày.",
-                "Thần Đô -> Bắc Hoang": "Khai Khiếu: 15 ngày; Ngoại Cảnh: 1 ngày.",
-                "Chân Thực Giới -> Cửu Trọng Thiên": "Cần mở thông đạo Cửu Trọng Thiên hoặc dùng Lôi Đao phá giới."
-            }
+            "realms": {
+                "Chân Thực Giới": "Thế giới bản nguyên trung tâm chư thiên. Gồm Đại Tấn, Bắc Hoang, Tây Vực, Nam Hoang, Đông Hải.",
+                "Cửu Trọng Thiên": "Di tích Thiên Đình cổ đại của Thiên Đế.",
+                "Cửu U": "Thế giới ma đạo u ám của Ma Hoàng và Huyết Hải.",
+                "Côn Luân Sơn Ngọc Hư Cung": "Đạo tràng cổ xưa của Nguyên Thủy Thiên Tôn."
+            },
+            "travel_mechanics": {
+                "Bách Nhật Trúc Cơ / Súc Khí": "Đi bộ hoặc xe ngựa (20-40 dặm/ngày).",
+                "Khai Khiếu (1-9 khiếu)": "Khinh công tuyệt đỉnh hoặc ngựa quý (100-300 dặm/ngày).",
+                "Ngoại Cảnh (Thiên Nhân Hợp Nhất)": "Ngự phong phi hành, vượt ngàn dặm trong vài canh giờ.",
+                "Pháp Thân (Nhân Tiên -> Thiên Tiên)": "Xé rách hư không, di chuyển tức thời.",
+                "Bỉ Ngạn": "Vượt thoát dòng thời gian, vô sở bất tại."
+            },
+            "top_locations_presence": dict(locations.most_common(15))
         }, f, ensure_ascii=False, indent=2)
 
     # 3. cultivation_mechanics.json
+    realms_26 = [
+        {"rank": 0, "name": "Bách Nhật Trúc Cơ", "desc": "Rèn luyện gân cốt khí huyết, đúc nền cơ thể."},
+        {"rank": 1, "name": "Thiền Định Súc Khí", "desc": "Tụ khí đan điền, đả thông kỳ kinh bát mạch."},
+        {"rank": 2, "name": "Khai Khiếu (Sơ kỳ - 1-4 Khiếu)", "desc": "Khai mở Mắt, Tai, Mũi."},
+        {"rank": 3, "name": "Khai Khiếu (Trung kỳ - 5-7 Khiếu)", "desc": "Khai mở Miệng, Tiền Âm, Hậu Âm."},
+        {"rank": 4, "name": "Khai Khiếu (Hậu kỳ - 8-9 Khiếu)", "desc": "Khai mở đầy đủ 9 khiếu cơ thể."},
+        {"rank": 5, "name": "Khai Khiếu (Cửu Khiếu Tề Khai - Viên Mãn)", "desc": "Nội khí viên mãn, chuẩn bị Thiên Nhân Giao Cảm."},
+        {"rank": 6, "name": "Bán Bộ Ngoại Cảnh (Thiên Nhân Hợp Nhất)", "desc": "Nội cảnh sơ thành, cảm ứng hòa nhập cùng thiên địa."},
+        {"rank": 7, "name": "Ngoại Cảnh (Nhất Trọng Thiên)", "desc": "Bắt đầu dẫn động thiên địa nguyên khí."},
+        {"rank": 8, "name": "Ngoại Cảnh (Nhị Trọng Thiên)", "desc": "Nguyên khí ngưng tụ, uy lực tăng gấp bội."},
+        {"rank": 9, "name": "Ngoại Cảnh (Tam Trọng Thiên)", "desc": "Sơ bộ chưởng khống thiên địa quy tắc."},
+        {"rank": 10, "name": "Ngoại Cảnh (Tứ Trọng Thiên)", "desc": "Ngoại Cảnh trung giai, ngự không phi hành thuần thục."},
+        {"rank": 11, "name": "Ngoại Cảnh (Ngũ Trọng Thiên)", "desc": "Hóa sinh dị tượng thiên địa."},
+        {"rank": 12, "name": "Ngoại Cảnh (Lục Trọng Thiên)", "desc": "Đỉnh phong trung giai, sát chiêu toái sơn đoạn giang."},
+        {"rank": 13, "name": "Ngoại Cảnh (Thất Trọng Thiên - Tông Sư)", "desc": "Danh xưng Tông Sư võ lâm, độc bộ giang hồ."},
+        {"rank": 14, "name": "Ngoại Cảnh (Bát Trọng Thiên - Đại Tông Sư)", "desc": "Danh xưng Đại Tông Sư, trụ cột các đại thế lực."},
+        {"rank": 15, "name": "Ngoại Cảnh (Cửu Trọng Thiên - Đỉnh Phong)", "desc": "Chạm tới ngưỡng cửa Pháp Thân."},
+        {"rank": 16, "name": "Bán Bộ Pháp Thân", "desc": "Nội cảnh diễn biến động thiên, chuẩn bị độ kiếp."},
+        {"rank": 17, "name": "Pháp Thân (Nhân Tiên)", "desc": "Thoát phàm nhập thánh, ngưng tụ Pháp Thân sơ giai."},
+        {"rank": 18, "name": "Pháp Thân (Địa Tiên)", "desc": "Địa Tiên cảnh giới, thọ nguyên ngàn năm."},
+        {"rank": 19, "name": "Pháp Thân (Thiên Tiên)", "desc": "Thiên Tiên chí tôn, xé rách hư không chư thiên."},
+        {"rank": 20, "name": "Bán Bộ Truyền Thuyết", "desc": "Bắt đầu cảm ứng hình chiếu vạn giới."},
+        {"rank": 21, "name": "Truyền Thuyết Cảnh", "desc": "Vô Sở Bất Tri, hình chiếu khắp vạn giới (Thần Tiên)."},
+        {"rank": 22, "name": "Tạo Hóa Cảnh", "desc": "Khổ hải trầm luân, cải tạo chư thiên (Kim Tiên / Thái Ất)."},
+        {"rank": 23, "name": "Bán Bộ Bỉ Ngạn", "desc": "Chạm tới bờ bên kia dòng thời gian."},
+        {"rank": 24, "name": "Bỉ Ngạn Cảnh", "desc": "Đứng trên dòng thời gian, hồi tố quá khứ (Đại La / Hỗn Nguyên)."},
+        {"rank": 25, "name": "Đạo Quả (Siêu Thoát)", "desc": "Vượt thoát tất cả, chân chính bất khả tư nghị."}
+    ]
     with open(os.path.join(out_dir, "cultivation_mechanics.json"), "w", encoding="utf-8") as f:
         json.dump({
+            "realms_26_tiers": realms_26,
             "top_mined_techniques": dict(techniques.most_common(120)),
-            "top_mined_weapons": dict(weapons.most_common(50)),
-            "realms_26_tiers": [
-                {"rank": 0, "name": "Bách Nhật Trúc Cơ"},
-                {"rank": 1, "name": "Thiền Định Súc Khí"},
-                {"rank": 2, "name": "Khai Khiếu (1-4 Khiếu: Mắt, Tai, Mũi)"},
-                {"rank": 3, "name": "Khai Khiếu (5-7 Khiếu: Miệng, Tiền Âm, Hậu Âm)"},
-                {"rank": 4, "name": "Khai Khiếu (8-9 Khiếu: Cửu Khiếu Tề Khai)"},
-                {"rank": 5, "name": "Bán Bộ Ngoại Cảnh (Thiên Nhân Hợp Nhất)"},
-                {"rank": 6, "name": "Ngoại Cảnh (1-3 Trọng Thiên - Sơ kỳ)"},
-                {"rank": 7, "name": "Ngoại Cảnh (4-6 Trọng Thiên - Trung kỳ)"},
-                {"rank": 8, "name": "Ngoại Cảnh (7 Trọng Thiên - Tông Sư)"},
-                {"rank": 9, "name": "Ngoại Cảnh (8 Trọng Thiên - Đại Tông Sư)"},
-                {"rank": 10, "name": "Ngoại Cảnh (9 Trọng Thiên - Đỉnh Phong)"},
-                {"rank": 11, "name": "Bán Bộ Pháp Thân"},
-                {"rank": 12, "name": "Pháp Thân (Nhân Tiên)"},
-                {"rank": 13, "name": "Pháp Thân (Địa Tiên)"},
-                {"rank": 14, "name": "Pháp Thân (Thiên Tiên)"},
-                {"rank": 15, "name": "Truyền Thuyết Cảnh (Thần Tiên)"},
-                {"rank": 16, "name": "Tạo Hóa Cảnh (Kim Tiên / Thái Ất)"},
-                {"rank": 17, "name": "Bỉ Ngạn Cảnh (Đại La / Hỗn Nguyên)"},
-                {"rank": 18, "name": "Đạo Quả (Siêu Thoát)"}
-            ]
+            "top_mined_weapons": dict(weapons.most_common(50))
         }, f, ensure_ascii=False, indent=2)
 
     # 4. factions_and_conspiracies.json
     with open(os.path.join(out_dir, "factions_and_conspiracies.json"), "w", encoding="utf-8") as f:
         json.dump({
-            "factions": {
+            "chinh_dao": {
                 "Thiếu Lâm Tự": "Đệ nhất Phật môn (Phương trượng Không Văn, Huyền Bi, Chân Định/Mạnh Kỳ).",
                 "Tẩy Kiếm Các": "Đệ nhất kiếm phái (Tô Vô Danh, Giang Chỉ Vi).",
                 "Chân Võ Tông": "Đạo môn chính tông (Trương Tam Phong truyền thừa).",
                 "Huyền Thiên Tông": "Thiên Đế truyền thừa, Thời Gian Chi Đao.",
+                "Lang Nha Nguyễn Thị": "Cầm đạo âm luật (Nguyễn Ngọc Thư)."
+            },
+            "ma_mon": {
                 "Tố Nữ Đạo": "Lục Đại Ma Môn (Cố Tiểu Tang, Vô Sinh Lão Mẫu).",
                 "Diệt Thiên Môn": "Diệt Thiên Ma Đao sát phạt.",
-                "Lang Nha Nguyễn Thị": "Cầm đạo âm luật (Nguyễn Ngọc Thư)."
+                "Hoan Hỷ Thiền": "Tà Thiền bí thuật, âm dương thải bổ.",
+                "Huyết Hải Giáo": "U Minh Huyết Hải, Hóa Huyết Thần Đao."
             },
             "masterminds": {
                 "Ma Phật An Nan": "Chủ mưu Lục Đạo, biến Mạnh Kỳ thành đạo tiêu trùng sinh.",
@@ -190,42 +184,82 @@ def compile_all_7_packs(epub_path: str = "Q565-一世之尊V1.0.epub"):
     with open(os.path.join(out_dir, "canonical_timeline.json"), "w", encoding="utf-8") as f:
         json.dump({
             "grand_arcs": [
-                {"arc": 1, "chapters": "1-50", "title": "Tân Thủ Luân Hồi & Thiếu Lâm Tàng Kinh", "core_events": "Nhập Thiếu Lâm, Ẩn Hình Phường, kết bạn Chỉ Vi."},
-                {"arc": 2, "chapters": "51-150", "title": "Giang Hồ Sơ Xuất & Nhân Bảng Tranh Phong", "core_events": "Cuồng Đao Tô Mạnh, Huyễn Hình Đại Pháp, gặp Tiểu Tang."},
-                {"arc": 3, "chapters": "151-300", "title": "Cửu Trọng Thiên & Lôi Đao Nhận Chủ", "core_events": "Đột phá Cửu Khiếu, Tề Chính Ngôn nhận Ma Hoàng truyền thừa."},
-                {"arc": 4, "chapters": "301-500", "title": "Đại Biến Thiếu Lâm & Xuất Sư Hoàn Tục", "core_events": "Thân thế Tô Tử Viễn bại lộ, trảm đoạn Thiếu Lâm, chứng Ngoại Cảnh."},
-                {"arc": 5, "chapters": "501-800", "title": "Tiên Sinh Tóc Bạc & Nỗi Hận 10 Năm", "core_events": "Tiểu Tang tự sát tuyệt mạng Kim Mẫu, Mạnh Kỳ tóc bạc ôm hận."},
-                {"arc": 6, "chapters": "801-1100", "title": "Chứng Đạo Pháp Thân & Ngọc Hư Chưởng Giáo", "core_events": "Chứng Bất Diệt Nguyên Thủy Pháp Thân, phục sinh Tiểu Tang."},
-                {"arc": 7, "chapters": "1101-1409", "title": "Mạt Thế Đại Kiếp & Bỉ Ngạn Tranh Đạo Quả", "core_events": "Đăng lâm Bỉ Ngạn, trảm sát Ma Phật, chứng Đạo Quả siêu thoát."}
+                {"arc_num": 1, "chapters": "1-50", "title": "Tân Thủ Luân Hồi & Thiếu Lâm Tàng Kinh", "mastermind": "Ma Phật An Nan", "core_events": "Nhập Thiếu Lâm, Ẩn Hình Phường, kết bạn Chỉ Vi."},
+                {"arc_num": 2, "chapters": "51-150", "title": "Giang Hồ Sơ Xuất & Nhân Bảng Tranh Phong", "mastermind": "Lục Đạo & Lục Đại Ma Môn", "core_events": "Cuồng Đao Tô Mạnh, Huyễn Hình Đại Pháp, gặp Tiểu Tang."},
+                {"arc_num": 3, "chapters": "151-300", "title": "Cửu Trọng Thiên & Lôi Đao Nhận Chủ", "mastermind": "Thiên Đế tàn niệm", "core_events": "Đột phá Cửu Khiếu, Tề Chính Ngôn nhận Ma Hoàng truyền thừa."},
+                {"arc_num": 4, "chapters": "301-500", "title": "Đại Biến Thiếu Lâm & Xuất Sư Hoàn Tục", "mastermind": "Ma Phật & Huyền Bi", "core_events": "Thân thế Tô Tử Viễn bại lộ, trảm đoạn Thiếu Lâm, chứng Ngoại Cảnh."},
+                {"arc_num": 5, "chapters": "501-800", "title": "Tiên Sinh Tóc Bạc & Nỗi Hận 10 Năm", "mastermind": "Kim Mẫu / Vô Sinh Lão Mẫu", "core_events": "Tiểu Tang tự sát tuyệt mạng Kim Mẫu, Mạnh Kỳ tóc bạc ôm hận."},
+                {"arc_num": 6, "chapters": "801-1100", "title": "Chứng Đạo Pháp Thân & Ngọc Hư Chưởng Giáo", "mastermind": "Nguyên Thủy Thiên Tôn", "core_events": "Chứng Bất Diệt Nguyên Thủy Pháp Thân, phục sinh Tiểu Tang."},
+                {"arc_num": 7, "chapters": "1101-1409", "title": "Mạt Thế Đại Kiếp & Bỉ Ngạn Tranh Đạo Quả", "mastermind": "Tam Thanh & Ma Phật", "core_events": "Đăng lâm Bỉ Ngạn, trảm sát Ma Phật, chứng Đạo Quả siêu thoát."}
             ]
         }, f, ensure_ascii=False, indent=2)
 
     # 6. character_dossiers.json
-    dossiers = {}
-    for cid, data in characters.items():
-        cname = char_registry[cid][0] if isinstance(char_registry[cid], tuple) else char_registry[cid]
-        dossiers[cid] = {
-            "name": cname,
-            "first_seen_chapter": data["first_ch"] if data["first_ch"] != 9999 else 1,
-            "last_seen_chapter": data["last_ch"],
-            "total_mentions": data["mentions"],
-            "sample_dialogues": data["quotes"]
+    dossiers = {
+        "meng_qi": {
+            "name": "Mạnh Kỳ",
+            "aliases": ["Chân Định", "Cuồng Đao Tô Mạnh", "Tô Tử Viễn", "Tiểu Hòa Thượng", "Tô Tiên Sinh", "Ngọc Hư Chưởng Giáo"],
+            "gender": "Nam",
+            "first_seen_chapter": characters["meng_qi"]["first_ch"],
+            "total_mentions": characters["meng_qi"]["mentions"],
+            "stages": {
+                "stage_1": {"chapters": "1-50", "title": "Chân Định", "tone": "Dí dỏm, sợ chết, lươn lẹo, thích trang bức."},
+                "stage_2": {"chapters": "51-200", "title": "Cuồng Đao Tô Mạnh", "tone": "Hào sảng, ngạo khí, đao ý cuồng bạo."},
+                "stage_3": {"chapters": "201-800", "title": "Tô Tiên Sinh", "tone": "Lãnh đạm, trầm mặc, tóc bạc mang hận báo thù."},
+                "stage_4": {"chapters": "801-1409", "title": "Ngọc Hư Chưởng Giáo", "tone": "Uy nghiêm, thấu triệt nhân quả, chấp chưởng Côn Luân."}
+            },
+            "sample_dialogues": characters["meng_qi"]["quotes"]
+        },
+        "jiang_zhiwei": {
+            "name": "Giang Chỉ Vi",
+            "aliases": ["Chỉ Vi muội muội", "Kiếm Xuất Vô Hối", "Tẩy Kiếm Các đệ tử"],
+            "gender": "Nữ",
+            "first_seen_chapter": characters["jiang_zhiwei"]["first_ch"],
+            "total_mentions": characters["jiang_zhiwei"]["mentions"],
+            "personality": "Kiếm tâm thuần túy, hào sảng hiệp khí, kiếm xuất vô hối, chỗ dựa sinh tử của đồng đội.",
+            "sample_dialogues": characters["jiang_zhiwei"]["quotes"]
+        },
+        "gu_xiaosang": {
+            "name": "Cố Tiểu Tang",
+            "aliases": ["Tiểu Tang", "Tố Nữ Đạo Thánh Nữ", "Yêu Nữ"],
+            "gender": "Nữ",
+            "first_seen_chapter": characters["gu_xiaosang"]["first_ch"],
+            "total_mentions": characters["gu_xiaosang"]["mentions"],
+            "personality": "Thông minh giảo hoạt, miệng gọi 'Tướng công', tâm cơ thâm sâu giấu kín nỗi tuyệt vọng chống lại Kim Mẫu.",
+            "sample_dialogues": characters["gu_xiaosang"]["quotes"]
+        },
+        "qi_zhengyan": {
+            "name": "Tề Chính Ngôn",
+            "aliases": ["Tề sư huynh", "Mặt đơ", "Ma Hoàng truyền nhân"],
+            "gender": "Nam",
+            "first_seen_chapter": characters["qi_zhengyan"]["first_ch"],
+            "total_mentions": characters["qi_zhengyan"]["mentions"],
+            "personality": "Mặt lạnh ít nói, lý tưởng chúng sinh bình đẳng, cam chịu tiếng xấu Ma đạo để cứu giúp phàm nhân."
+        },
+        "ruan_yushu": {
+            "name": "Nguyễn Ngọc Thư",
+            "aliases": ["Ngọc Thư", "Lang Nha Nguyễn Thị"],
+            "gender": "Nữ",
+            "first_seen_chapter": characters["ruan_yushu"]["first_ch"],
+            "total_mentions": characters["ruan_yushu"]["mentions"],
+            "personality": "Thanh nhã như tiên, bên ngoài lãnh đạm nhưng mê đồ ăn vặt, tiếng đàn Phượng Tê bảo hộ đồng đội."
         }
+    }
     with open(os.path.join(out_dir, "character_dossiers.json"), "w", encoding="utf-8") as f:
         json.dump({"characters": dossiers}, f, ensure_ascii=False, indent=2)
 
     # 7. cosmic_invariants.json
     with open(os.path.join(out_dir, "cosmic_invariants.json"), "w", encoding="utf-8") as f:
         json.dump({
-            "invariants": [
-                "Luật Lục Đạo: Cấm tiết lộ bí mật Lục Đạo cho người chưa vào Luân Hồi.",
-                "Luật Nhân Quả: Công pháp Bỉ Ngạn mang nhân quả sâu nặng.",
+            "taboos": [
+                "Luật Lục Đạo: Cấm tiết lộ bí mật Lục Đạo cho người chưa vào Luân Hồi (vi phạm bị xóa sổ).",
+                "Luật Nhân Quả: Công pháp Bỉ Ngạn mang nhân quả sâu nặng, không thể tùy tiện tu luyện.",
                 "Luật Thời Gian: Quá khứ không thể tùy tiện sửa đổi nếu không có thực lực Bỉ Ngạn.",
                 "Luật Khai Khiếu: Phải mở đủ 9 khiếu mới có thể tiến hành Thiên Nhân Giao Cảm."
             ]
         }, f, ensure_ascii=False, indent=2)
 
-    print(f"🎉 HOÀN TẤT BỔ SUNG TRỌN VẸN 7 PHẦN MASTER LORE PACK VÀO {out_dir}/!")
+    print(f"🎉 HOÀN TẤT BỔ SUNG ĐỒNG BỘ 7 PHẦN MASTER LORE PACK VÀO {out_dir}/!")
 
 if __name__ == "__main__":
     compile_all_7_packs()
