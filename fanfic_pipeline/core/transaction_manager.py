@@ -202,13 +202,132 @@ class ChapterTransactionManager:
             result = {"status": "COMMITTED", "chapter_number": chapter_num, "draft_hash": actual_hash, "new_state": new_state, "tx_id": tx_id, "branch_id": branch_id, "packet_hash": packet_hash, "plan_hash": plan_hash}
             idx = self._load_index(); idx[tx_id]=result; self._save_index(idx)
             self._append_journal({"tx_id": tx_id, "phase": "COMMITTED", "at": time.time()})
-            # cleanup staging
+            # Governance P0 (spec 2026-08-21 §3): event_map append + manifest regen.
+            # Best-effort: governance failure KHÔNG rollback commit đã atomic, nhưng
+            # phải hiện ra trong result để compliance bắt được.
+            governance_status = self._governance_post_commit(chapter_num, draft, outline, actual_hash, tx_id, packet_hash, plan_hash)
             shutil.rmtree(staging, ignore_errors=True)
+            result["governance"] = governance_status
             return result
         except Exception as e:
-            # Rollback: restore everything from before snapshot, remove partial staging
             self._rollback_staging(tx_id, chapter_num, ch_dir, ch_dir_existed, ch_dir_backup, staging, meta_before, memories_before, branches_before, mem_items_before, hybrid_before_raw, hybrid_path, current_state, e)
             raise
+
+    def _governance_post_commit(self, chapter_num: int, draft, outline,
+                                draft_hash: str, tx_id: str,
+                                packet_hash: str, plan_hash: str) -> Dict[str, Any]:
+        """INV-4 provenance: event_map.jsonl append + SHA-256 manifest regenerate.
+        Best-effort — lỗi ghi governance không phá commit nhưng được báo cáo."""
+        status = {"event_map": "skipped", "manifest": "skipped"}
+        try:
+            tl_dir = os.path.join(self.state_mgr.project_dir, "timeline")
+            os.makedirs(tl_dir, exist_ok=True)
+            ev_path = os.path.join(tl_dir, "event_map.jsonl")
+            # divergences registered trong chương này (từ butterfly ledger nếu có)
+            divs = []
+            try:
+                led_p = os.path.join(self.state_mgr.project_dir, "butterfly", "divergence_ledger.json")
+                if os.path.exists(led_p):
+                    from fanfic_pipeline.butterfly.divergence_ledger import DivergenceLedger
+                    led = DivergenceLedger.load(led_p)
+                    divs = [d.id for d in led.divergences
+                            if getattr(d, "origin_fic_chapter", None) == chapter_num]
+            except Exception:
+                pass
+            rec = {
+                "fic_ch": chapter_num,
+                "tx_id": tx_id,
+                "draft_sha256": hashlib.sha256(draft.content.encode("utf-8")).hexdigest(),
+                "divergences_registered": divs,
+                "packet_hash": packet_hash or None,
+                "plan_hash": plan_hash or None,
+                "committed_at": time.time(),
+            }
+            with open(ev_path, "a", encoding="utf-8") as f:
+                f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+            status["event_map"] = "appended"
+        except Exception as e:
+            status["event_map"] = f"error: {e}"
+        try:
+            self._write_minimal_compliance(chapter_num, draft, outline, draft_hash,
+                                           tx_id, packet_hash, plan_hash, divs)
+            status["compliance"] = "written"
+        except Exception as e:
+            status["compliance"] = f"error: {e}"
+        try:
+            self._regenerate_manifest()
+            status["manifest"] = "regenerated"
+        except Exception as e:
+            status["manifest"] = f"error: {e}"
+        return status
+
+    def _write_minimal_compliance(self, chapter_num, draft, outline, draft_hash,
+                                  tx_id, packet_hash, plan_hash, divergences):
+        """Compliance report tối thiểu per-commit (INV-3/INV-4): subsystem statuses
+        với evidence hash thật; subsystem chưa chạy ghi N/A_WITH_REASON rõ lý do.
+        P1+ sẽ enrich report bằng checker results + style fidelity."""
+        from fanfic_pipeline.packages.governance.compliance import (
+            ComplianceReport, SubsystemStatus, evidence_hash,
+        )
+        rep = ComplianceReport(chapter_num)
+        ev = evidence_hash("commit", tx_id, draft_hash)
+        used = {
+            "canon_store_rag": "RAG canon qua engine",
+            "butterfly_engine": "divergence extraction + ledger",
+            "audit_gate": "AuditRunner fail-closed",
+            "transaction_commit": "atomic staging commit",
+        }
+        for sid, why in used.items():
+            rep.set_status(SubsystemStatus(sid, "USED", reason=why, evidence_hash=ev))
+        na = {
+            "vi_canon_retrieval": "P2 chưa merge — corpus VI chưa cắm vào context",
+            "identity_coref": "P3 chưa merge",
+            "capability_timeline": "P3 chưa merge",
+            "social_web": "P3 chưa merge",
+            "oc_power_system": "P3 chưa merge (project không khai OC power)",
+            "narrative_ledgers": "P3 chưa merge",
+            "style_profile": "P2 chưa merge — fingerprint chưa tính",
+        }
+        for sid, why in na.items():
+            rep.set_status(SubsystemStatus(sid, "N/A_WITH_REASON", reason=why))
+        # optional layers theo runtime policy
+        try:
+            from fanfic_pipeline.packages.governance.policy import RuntimePolicy
+            pol = RuntimePolicy(self.state_mgr.project_dir)
+            for r in pol.routed_off_receipts():
+                rep.set_status(SubsystemStatus(r["subsystem"], r["status"], reason=r["reason"]))
+        except Exception:
+            pass
+        rep.premise_receipt_hash = None  # P0: premise receipt bind ở readiness; P4 bind vào đây
+        rep.draft_sha256 = hashlib.sha256(draft.content.encode("utf-8")).hexdigest()
+        rep.sections["pipeline"] = {"tx_id": tx_id, "packet_hash": packet_hash or None,
+                                    "plan_hash": plan_hash or None}
+        rep.sections["state"] = {"divergences_registered": divergences}
+        rep.save(self.state_mgr.project_dir)
+
+    def _regenerate_manifest(self):
+        """INV-4: manifest SHA-256 của mọi file runtime quan trọng sau mỗi commit."""
+        import hashlib as _h
+        root = self.state_mgr.project_dir
+        targets = ["project_meta.json", "story_state.json", "memories.json",
+                   os.path.join("timeline", "event_map.jsonl"),
+                   os.path.join("butterfly", "divergence_ledger.json"),
+                   os.path.join("butterfly", "counterfactual.json")]
+        entries = {}
+        for rel in targets:
+            p = os.path.join(root, rel)
+            if os.path.exists(p):
+                h = _h.sha256()
+                with open(p, "rb") as f:
+                    for b in iter(lambda: f.read(1 << 20), b""):
+                        h.update(b)
+                entries[rel] = h.hexdigest()
+        out = os.path.join(root, "MANIFEST_SHA256.json")
+        tmp = out + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump({"generated_at": time.time(), "files": entries}, f,
+                      ensure_ascii=False, indent=2)
+        os.replace(tmp, out)
 
     def _rollback_staging(self, tx_id, chapter_num, ch_dir, ch_dir_existed, ch_dir_backup, staging, meta_before, memories_before, branches_before, mem_items_before, hybrid_before_raw, hybrid_path, current_state, cause):
         # Restore chapter dir

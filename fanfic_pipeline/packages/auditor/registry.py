@@ -20,7 +20,14 @@ from fanfic_pipeline.packages.auditor.checkers.ooc_fidelity import OOCFidelityCh
 from fanfic_pipeline.packages.auditor.checkers.relationship_dynamics import RelationshipDynamicsChecker
 from fanfic_pipeline.packages.auditor.checkers.pacing import PacingChecker
 from fanfic_pipeline.packages.auditor.checkers.canon_fidelity import CanonFidelityChecker
-from fanfic_pipeline.packages.auditor.checkers.epistemic_leak import EpistemicLeakChecker
+from fanfic_pipeline.packages.auditor.checkers.epistemic_claim import EpistemicClaimChecker
+from fanfic_pipeline.packages.auditor.checkers.meta_leak import MetaLeakChecker
+from fanfic_pipeline.packages.auditor.checkers.transition_topology import TransitionTopologyChecker
+from fanfic_pipeline.packages.auditor.checkers.domain_fill import DomainFillChecker
+from fanfic_pipeline.packages.auditor.checkers.style_fingerprint import StyleFingerprintChecker
+from fanfic_pipeline.packages.auditor.checkers.identity_reveal import IdentityRevealChecker
+from fanfic_pipeline.packages.auditor.checkers.bounded_progression import BoundedProgressionChecker
+from fanfic_pipeline.packages.auditor.checkers.combat_style import CombatStyleChecker
 from fanfic_pipeline.packages.auditor.checkers.sensory_density import SensoryDensityChecker
 
 DEFAULT_CHECKERS: List[Type[BaseChecker]] = [
@@ -28,8 +35,10 @@ DEFAULT_CHECKERS: List[Type[BaseChecker]] = [
     ResourceLedgerChecker, SpatialContinuityChecker, TimelineConsistencyChecker,
     FrozenCanonChecker, AIPatternChecker, PODCompatibilityChecker, CanonOrphanChecker,
     ButterflyDebtChecker, DivergenceMonotonicityChecker, OOCFidelityChecker,
-    RelationshipDynamicsChecker, PacingChecker, CanonFidelityChecker, EpistemicLeakChecker,
-    SensoryDensityChecker
+    RelationshipDynamicsChecker, PacingChecker, CanonFidelityChecker,
+    EpistemicClaimChecker, MetaLeakChecker, TransitionTopologyChecker, DomainFillChecker,
+    StyleFingerprintChecker, IdentityRevealChecker, BoundedProgressionChecker,
+    CombatStyleChecker, SensoryDensityChecker
 ]
 
 class CheckerRegistry:

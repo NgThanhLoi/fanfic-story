@@ -1,0 +1,11 @@
+{
+  "lang": "vi",
+  "documents": 1397,
+  "tfidf_features": 18000,
+  "lsa_dims": 64,
+  "explained_variance_ratio_sum": 0.1523,
+  "build_seconds": 10.56,
+  "backend": "chapter_tfidf_truncated_svd_lsa",
+  "neural_embedding": false,
+  "role": "broad semantic-ish chapter router; chunk retrieval remains FTS/BM25"
+}

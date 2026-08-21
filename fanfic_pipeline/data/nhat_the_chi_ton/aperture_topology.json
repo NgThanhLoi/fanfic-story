@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0",
+  "description": "Canonical transition topology cho Khai Khiếu — grounded bằng evidence-substring từ corpus canon tiếng Việt (data/nhat_the_chi_ton/vi_canon/chunks.jsonl). Nguồn bài học: YZSZ_DETAILED_REVIEW_FC36_AND_WORKSPACE_2026-08-21.md F-01/F-02/F-09.",
+  "rules": [
+    "Mọi chuyển-trạng thái (transition) phải đi theo cạnh của graph dưới đây, trừ khi có exception receipt (governance/premise.py chấp nhận 'exception_receipts').",
+    "Mỗi cạnh phải có evidence là substring thật của chunk canon + source_chunk_id. Không evidence ⇒ không được khai báo cạnh.",
+    "Ngưng luyện auxiliary points của khiếu kế tiếp KHÔNG đồng nghĩa với mở khiếu; opening chỉ xảy ra khi draft/spec tuyên bố 'khai/mở <khiếu>'."
+  ],
+  "aperture_order": ["eye", "ear", "nose", "mouth"],
+  "nodes": {
+    "eye":   {"vi_names": ["mắt khiếu", "nhãn khiếu", "mở mắt khiếu"], "aux_points_canon_count": null},
+    "ear":   {"vi_names": ["nhĩ khiếu", "tai khiếu", "hai tai chi khiếu"], "aux_points_canon_count": 9},
+    "nose":  {"vi_names": ["mũi khiếu", "tỵ khiếu"], "aux_points_canon_count": 9},
+    "mouth": {"vi_names": ["khẩu khiếu", "miệng khiếu"], "aux_points_canon_count": null}
+  },
+  "edges": [
+    {
+      "from": "eye",
+      "to": "ear",
+      "evidence": [
+        {
+          "source_chunk_id": "p01-c010-vi-k003",
+          "global_chapter_no": 10,
+          "substring": "Bọn họ đều còn chưa khai nhĩ khiếu",
+          "note": "Chương 10: mắt khiếu đã mở (cùng chương, p01-c010-vi-k001 'đã mở mắt khiếu'), nhĩ khiếu chưa — thứ tự mắt trước tai."
+        },
+        {
+          "source_chunk_id": "p01-c017-vi-k003",
+          "global_chapter_no": 17,
+          "substring": "Ta cùng với nhĩ khiếu có liên quan cửu xử khiếu huyệt giai đã ngưng luyện hoàn tất, chỉ kém nửa bước liền có thể khai hai tai chi khiếu",
+          "note": "Quy trình chuẩn: ngưng luyện 9 huyệt phụ trợ xong mới khai khiếu."
+        }
+      ]
+    },
+    {
+      "from": "ear",
+      "to": "nose",
+      "evidence": [
+        {
+          "source_chunk_id": "p01-c017-vi-k004",
+          "global_chapter_no": 17,
+          "substring": "ta nếu dùng ‘Thiên Thông hoàn’ khai nhĩ khiếu, kia khai mũi khiếu khi, liền không có thể lại dùng ‘Thiên Thông hoàn’",
+          "note": "Nhắc nhĩ khiếu rồi mới đến mũi khiếu trong cùng chuỗi kế hoạch khai khiếu."
+        },
+        {
+          "source_chunk_id": "p02-c005-vi-k004",
+          "global_chapter_no": 88,
+          "substring": "Hắn vốn đã mở mắt khiếu, nhĩ khiếu, mũi khiếu đẳng trời sinh cửu khiếu",
+          "note": "Liệt kê thứ tự trạng thái đạt được: mắt → nhĩ → mũi."
+        }
+      ]
+    },
+    {
+      "from": "nose",
+      "to": "mouth",
+      "evidence": [
+        {
+          "source_chunk_id": "p03-c102-vi-k003",
+          "global_chapter_no": 250,
+          "substring": "Khẩu khiếu tương quan cuối cùng một khiếu huyệt tự nhiên ngưng luyện, khẩu khiếu tự hành mở",
+          "note": "Khẩu khiếu là khiếu sau cùng của giai đoạn nội cảnh; mũi khiếu đã mở trước đó (ch.80 'Ta khai mũi khiếu dự tính được lần sau nhiệm vụ')."
+        }
+      ]
+    }
+  ],
+  "forbidden_skips": [
+    {"skip": "eye->nose", "reason": "Bỏ nhĩ khiếu — lỗi FC36 v1 (review F-01)"},
+    {"skip": "eye->mouth", "reason": "Bỏ hai khiếu"},
+    {"skip": "ear->mouth", "reason": "Bỏ mũi khiếu"}
+  ],
+  "domain_fill_guard": {
+    "description": "Cấm map hệ khiếu-huyệt của canon sang huyệt TCM thật nếu không có canonicalization receipt.",
+    "blocked_tcm_terms": ["Nghênh Hương", "Tỵ Thông", "Ấn Đường", "Đốc Mạch", "Nhân Trung", "Thần Đường"],
+    "canonicalization_receipt_required": true,
+    "lesson": "Review F-02: canon chỉ nói '9 khiếu huyệt liên quan Tỵ Khiếu, vị trí kỳ lạ' — không support gán vào huyệt TCM."
+  }
+}

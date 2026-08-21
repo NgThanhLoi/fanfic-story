@@ -1,0 +1,104 @@
+source_basis:
+  primary_window: "Vietnamese MOBI ch.28-43"
+  secondary_window: "Vietnamese MOBI ch.1-180"
+  note: "Profiles describe observed translated voice; corrupted MOBI bytes are ignored."
+
+characters:
+  "Mạnh Kỳ":
+    aliases_at_early_timeline: ["Chân Định", "tiểu hòa thượng"]
+    narration:
+      - "close-third repeatedly names Mạnh Kỳ and then enters inner commentary"
+      - "modern-Earth comparisons appear sparingly but distinctly"
+      - "tactical reasoning can sit directly beside comic/self-deprecating thought"
+      - "frequent inner reaction markers: trong lòng, nội tâm, âm thầm, theo bản năng"
+    dialogue:
+      register: "flexible: monk-politeness outside, playful/argumentative with peers"
+      tendencies:
+        - "asks rhetorical questions and builds explanations"
+        - "can use A Di Đà Phật / Đại Sư persona language when useful"
+        - "often jokes by rationalizing something absurd with a straight face"
+    addresses_early:
+      "Giang Chỉ Vi": ["Giang cô nương", "Chỉ Vi when intimacy/timepoint permits"]
+      "Trương Viễn Sơn": ["Trương sư huynh"]
+      "Tề Chính Ngôn": ["Tề sư huynh"]
+    avoid:
+      - "generic heroic solemnity for long stretches"
+      - "modern meme spam"
+
+  "Giang Chỉ Vi":
+    narration:
+      - "bright, direct presence; expressive smiles are common"
+      - "combat observations are precise and confident"
+    dialogue:
+      register: "clear, generous, martial-arts literate"
+      tendencies:
+        - "speaks directly instead of coyly"
+        - "shows genuine excitement about worthy techniques/opponents"
+        - "can tease Mạnh Kỳ without losing competence"
+    addresses_early:
+      "Mạnh Kỳ": ["tiểu hòa thượng", "Chân Định"]
+      "Trương Viễn Sơn": ["Trương sư huynh"]
+    avoid:
+      - "ice-beauty stereotype"
+      - "overly romantic softness in early arc"
+
+  "Trương Viễn Sơn":
+    narration:
+      - "stable, restrained, team-oriented"
+    dialogue:
+      register: "courteous, formal, explanatory"
+      tendencies:
+        - "uses sect/peer honorifics consistently"
+        - "weighs consequences and group safety"
+        - "often gives a reason after a recommendation"
+    addresses_early:
+      "Mạnh Kỳ": ["Chân Định sư đệ"]
+      "Giang Chỉ Vi": ["Giang sư muội"]
+    avoid:
+      - "banter-first characterization"
+
+  "Tề Chính Ngôn":
+    narration:
+      - "low-reactivity, serious, practical"
+      - "early inferiority/ordinary-talent awareness colors choices"
+    dialogue:
+      register: "terse and restrained"
+      tendencies:
+        - "speaks when there is a practical point"
+        - "can be dry without intentionally performing humor"
+    avoid:
+      - "long witty monologues"
+      - "high-energy emotional display without event justification"
+
+  "Cố Tiểu Tang":
+    narration:
+      - "beauty/innocence imagery is deliberately juxtaposed with danger"
+      - "smiles and graceful gestures often accompany lethal intent"
+    dialogue:
+      register: "sweet, playful, intimate beyond what relationship warrants"
+      tendencies:
+        - "uses teasing questions and false choices"
+        - "weaponizes terms of intimacy such as phu quân at the appropriate canon stage"
+        - "can discuss killing with a light, almost troublesome-problem tone"
+    avoid:
+      - "cold femme-fatale voice"
+      - "constant explicit menace; threat should often be implicit in contrast"
+
+  "Thiên Diện":
+    canon_status: "fanfic-original"
+    style_integration:
+      narration:
+        - "longer connected sentences than draft v1"
+        - "detail -> baseline -> discrepancy -> inference is her signature cognitive chain"
+        - "inner humor is dry and quieter than Mạnh Kỳ's"
+        - "identity bleed may deliberately break the otherwise connected cadence"
+      dialogue:
+        register: "professionally polite, economical, identity-dependent"
+        tendencies:
+          - "current persona determines vocabulary and social posture"
+          - "true voice is calm, observant, lightly self-mocking"
+          - "rare modern concepts stay internal unless she has a world-appropriate paraphrase"
+      early_dynamic_with_mengqi:
+        - "mutual anomaly detection before trust"
+        - "she notices he performs roles unusually well; he notices she observes too professionally"
+        - "no explicit romance in Arc 1"

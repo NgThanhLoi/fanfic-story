@@ -44,3 +44,15 @@ htmlcov/
 # Storage temp / local transactions logs
 fanfic_pipeline/storage/projects/*/transactions/
 fanfic_pipeline/storage/projects/*/snapshots/
+
+# Reference package (read-only, 489MB — không commit)
+docs/references/
+
+# Live test / AB test project storage (runtime artifacts)
+fanfic_pipeline/storage/projects/live_test/
+fanfic_pipeline/storage/projects/ab_qwenmax/
+fanfic_pipeline/storage/projects/ab_xpreview/
+fanfic_pipeline/storage/projects/e2e/
+fanfic_pipeline/storage/projects/smoke/
+fanfic_pipeline/storage/live_test/
+fanfic_pipeline/storage/projects/fanfic_gu_xiaosang_rebirth/

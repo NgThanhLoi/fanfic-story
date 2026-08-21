@@ -68,6 +68,53 @@ class FanficEngine:
         self.butterfly_graph = None
         self._init_butterfly()
 
+    def _style_rewrite_if_needed(self, draft_text: str) -> Dict[str, Any]:
+        """P4.5: StyleRewriteLoop — chỉ active khi runtime_policy style.mode =
+        canon_mimicry. Fingerprint refingerprint từ corpus VI (cache 1 lần)."""
+        try:
+            from fanfic_pipeline.packages.governance.policy import RuntimePolicy
+            policy = RuntimePolicy(self.state_mgr.project_dir)
+            if policy.style_mode != "canon_mimicry":
+                return {"text": draft_text, "skipped": f"mode={policy.style_mode}"}
+            from fanfic_pipeline.packages.retrieval.style_profile import (
+                analyze_text, refingerprint, fidelity,
+            )
+            from fanfic_pipeline.packages.retrieval.style_rewrite import StyleRewriteLoop
+
+            cache = getattr(self, "_style_fp_cache", None)
+            if cache is None:
+                fp_path = os.path.join(self.state_mgr.project_dir, "style_fingerprint.json")
+                if os.path.exists(fp_path):
+                    cache = json.load(open(fp_path, encoding="utf-8"))
+                else:
+                    data_dir = os.path.join(os.path.dirname(__file__), "..", "data",
+                                            "nhat_the_chi_ton", "vi_canon")
+                    cache = refingerprint(data_dir, 28, 43)
+                    try:
+                        with open(fp_path, "w", encoding="utf-8") as f:
+                            json.dump(cache, f, ensure_ascii=False, indent=2)
+                    except Exception:
+                        pass
+                self._style_fp_cache = cache
+
+            writer_cfg = self.router.writer_agent
+            system = ("Bạn là biên tập viên văn liệu tiếng Việt cho fanfic Nhất Thế "
+                      "Chi Tôn. NHIỆM VỤ: viết lại văn theo CHỈ ĐẠO nhịp văn, giữ "
+                      "NGUYÊN VẸN cốt truyện/chi tiết/đối thoại — chỉ chỉnh cấu trúc "
+                      "câu và đoạn. Trả về duy nhất văn đã sửa, không giải thích.")
+
+            def rewrite(text: str, directives: List[str]) -> str:
+                user = ("[CHỈ ĐẠO NHỊP VĂN]:\n" + "\n".join(f"- {d}" for d in directives) +
+                        "\n\n[VĂN BẢN GỐC]:\n" + text)
+                return self._execute_agent("writer_agent", writer_cfg, system, user)
+
+            loop = StyleRewriteLoop(cache, rewrite,
+                                    target_fidelity=policy.canon_min_fidelity,
+                                    max_rounds=2)
+            return loop.run(draft_text)
+        except Exception as e:
+            return {"text": draft_text, "error": str(e)}
+
     def _load_enrichment_store(self):
         """Load EnrichmentStore (SQLite) nếu project đã chạy 'enrich'; None nếu chưa (graceful)."""
         db_path = os.path.join(self.state_mgr.project_dir, "enrichment.db")
@@ -539,6 +586,14 @@ Hãy đánh giá OOC Score (0-10), Canon Consistency Score (0-10), De-AI Score (
         packet = self.build_sealed_packet(chapter_num, author_instruction)
         self._last_packet = packet
         draft = self.write_draft(outline, sealed_packet=packet)
+
+        # Step 2.2: Style Rewrite Loop (P4.5) — bám văn phong canon qua directive
+        # cụ thể; chỉ tốn call khi fidelity < target. Fail-closed: vẫn FAIL ⇒
+        # audit gate chặn như thường.
+        self._last_style_rewrite = self._style_rewrite_if_needed(draft.content)
+        if self._last_style_rewrite["text"] != draft.content:
+            draft.content = self._last_style_rewrite["text"]
+            draft.word_count = len(re.findall(r'\S+', draft.content))
 
         # Step 2.5: Butterfly lifecycle (SPEC §6.2.5) — extract divergence → propagate → mark satisfied
         self._butterfly_lifecycle(chapter_num, draft)
