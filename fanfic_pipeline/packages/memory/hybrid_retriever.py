@@ -190,6 +190,16 @@ class HybridMemoryEngine:
         self._fts_available: Optional[bool] = None
         self._bm25_available: Optional[bool] = None
         self._bm25_module = None
+        # P4.3: SQLite backend — primary store; JSON fallback for backward compat
+        self._sqlite_store = None
+        self._use_sqlite = False
+        try:
+            from fanfic_pipeline.packages.memory.sqlite_memory_store import SqliteMemoryStore
+            sqlite_path = str(Path(memory_file).with_suffix(".db")) if Path(memory_file).suffix == ".json" else str(memory_file) + ".db"
+            self._sqlite_store = SqliteMemoryStore(sqlite_path)
+            self._use_sqlite = True
+        except Exception:
+            pass
         self._check_bm25_available()
         self._load()
         # ensure FTS ready if items exist
@@ -202,25 +212,47 @@ class HybridMemoryEngine:
     # ---------------- persistence ----------------
 
     def _load(self):
+        # P4.3: Try SQLite first, fallback to JSON
+        if self._use_sqlite and self._sqlite_store:
+            try:
+                rows = self._sqlite_store.load_all()
+                if rows:
+                    self.items = [HybridMemoryItem.from_dict(r) for r in rows]
+                    return
+            except Exception:
+                pass
+        # Fallback: load from JSON file
         if os.path.exists(self.memory_file):
             try:
                 with open(self.memory_file, "r", encoding="utf-8") as f:
                     data = json.load(f)
-                # data là list of dicts
                 if isinstance(data, list):
                     self.items = [HybridMemoryItem.from_dict(d) for d in data]
                 elif isinstance(data, dict):
-                    # có thể là dict id->obj
                     self.items = [HybridMemoryItem.from_dict(v) for v in data.values()]
                 else:
                     self.items = []
+                # Auto-migrate: if SQLite available but empty, import JSON data
+                if self._use_sqlite and self._sqlite_store and self.items:
+                    try:
+                        for it in self.items:
+                            self._sqlite_store.upsert(it.to_dict())
+                    except Exception:
+                        pass
             except Exception:
                 self.items = []
         else:
             self.items = []
 
     def _save(self):
-        # atomic write
+        # P4.3: Save to SQLite if available, always also write JSON for backward compat
+        if self._use_sqlite and self._sqlite_store:
+            try:
+                for it in self.items:
+                    self._sqlite_store.upsert(it.to_dict())
+            except Exception:
+                pass
+        # Always write JSON for backward compat
         os.makedirs(os.path.dirname(self.memory_file) or ".", exist_ok=True)
         tmp = self.memory_file + ".tmp"
         with open(tmp, "w", encoding="utf-8") as f:

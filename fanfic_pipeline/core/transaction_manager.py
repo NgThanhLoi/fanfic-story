@@ -26,6 +26,8 @@ class ChapterTransactionManager:
         self.index_path = os.path.join(self.tx_dir, "index.json")
         if not os.path.exists(self.index_path):
             with open(self.index_path, "w", encoding="utf-8") as f: json.dump({}, f)
+        # P4.4: Crash recovery — detect orphaned staging from previous crash
+        self._recover_orphaned_transactions()
 
     def _load_index(self) -> Dict[str,Any]:
         try:
@@ -252,8 +254,6 @@ class ChapterTransactionManager:
         self._append_journal({"tx_id": tx_id, "phase": "ABORTED", "error": str(cause), "at": time.time()})
         idx = self._load_index()
         idx[tx_id] = {"status": "ABORTED", "chapter_number": chapter_num, "error": str(cause), "tx_id": tx_id}
-        self._save_index(idx)
-
     def rollback_transaction(self, target_chapter: int, branch_id: str = "main"):
         self.state_mgr.rollback_to_chapter(target_chapter)
         try: self.memory_engine.items = [m for m in self.memory_engine.items if getattr(m,'chapter_reference', getattr(m,'chapter', 9999)) <= target_chapter]; self.memory_engine._save()
@@ -262,3 +262,86 @@ class ChapterTransactionManager:
 
     def fork_branch(self, new_branch_id: str, from_chapter: int, from_branch: str = "main"):
         return self.state_mgr.create_branch(new_branch_id, from_chapter, from_branch)
+
+    # --- P4.4 Crash Recovery ---
+
+    def _recover_orphaned_transactions(self):
+        """Scan journal for uncommitted TXs (BEGIN without COMMITTED/ABORTED). Rollback orphaned staging dirs."""
+        if not os.path.exists(self.journal_path):
+            return
+        try:
+            begun = {}  # tx_id -> journal record
+            resolved = set()
+            with open(self.journal_path, "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    try:
+                        rec = json.loads(line)
+                    except Exception:
+                        continue
+                    tx_id = rec.get("tx_id")
+                    phase = rec.get("phase")
+                    if not tx_id or not phase:
+                        continue
+                    if phase == "BEGIN":
+                        begun[tx_id] = rec
+                    elif phase in ("COMMITTED", "ABORTED"):
+                        resolved.add(tx_id)
+            orphaned = {tid: rec for tid, rec in begun.items() if tid not in resolved}
+            for tx_id, rec in orphaned.items():
+                staging = os.path.join(self.tx_dir, f"staging_{tx_id}")
+                if os.path.exists(staging):
+                    try:
+                        shutil.rmtree(staging, ignore_errors=True)
+                    except Exception:
+                        pass
+                self._append_journal({"tx_id": tx_id, "phase": "RECOVERED", "reason": "orphaned_staging_cleanup", "at": time.time()})
+                idx = self._load_index()
+                if tx_id not in idx:
+                    idx[tx_id] = {"status": "RECOVERED", "chapter_number": rec.get("chapter", -1), "error": "orphaned_from_crash", "tx_id": tx_id}
+                    self._save_index(idx)
+            # Pass 2: scan filesystem for staging dirs without any journal entry (torn write before BEGIN logged)
+            known_tx_ids = set(begun.keys()) | resolved
+            try:
+                for entry in os.listdir(self.tx_dir):
+                    if entry.startswith("staging_") and os.path.isdir(os.path.join(self.tx_dir, entry)):
+                        tid = entry[len("staging_"):]
+                        if tid not in known_tx_ids:
+                            try:
+                                shutil.rmtree(os.path.join(self.tx_dir, entry), ignore_errors=True)
+                            except Exception:
+                                pass
+                            self._append_journal({"tx_id": tid, "phase": "RECOVERED", "reason": "orphaned_staging_no_journal", "at": time.time()})
+            except Exception:
+                pass
+        except Exception:
+            pass
+
+    def recover_butterfly_state(self, butterfly_dir: str) -> Dict[str, Any]:
+        """Validate butterfly state files consistency after crash. Returns status dict."""
+        result = {"ledger": "missing", "counterfactual": "missing", "pod": "missing"}
+        if not os.path.isdir(butterfly_dir):
+            return result
+        ledger_path = os.path.join(butterfly_dir, "divergence_ledger.json")
+        cf_path = os.path.join(butterfly_dir, "counterfactual.json")
+        pod_path = os.path.join(butterfly_dir, "pod.json")
+        # Check each file is valid JSON (not torn write)
+        for key, path in [("ledger", ledger_path), ("counterfactual", cf_path), ("pod", pod_path)]:
+            if not os.path.exists(path):
+                continue
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                if isinstance(data, (dict, list)):
+                    result[key] = "valid"
+                else:
+                    result[key] = "corrupt"
+            except (json.JSONDecodeError, UnicodeDecodeError):
+                result[key] = "corrupt"
+            except Exception:
+                result[key] = "error"
+        # If ledger is corrupt but counterfactual is valid, we can still operate in degraded mode
+        # If both corrupt, butterfly must re-seed from POD on next engine init
+        return result

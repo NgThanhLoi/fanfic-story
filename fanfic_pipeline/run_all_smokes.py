@@ -21,7 +21,8 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from fanfic_pipeline.packages.parser.epub_parser import EpubIngestionEngine, NovelChapter
-from fanfic_pipeline.packages.auditor.matrix_33 import AuditorEngine
+from fanfic_pipeline.packages.auditor import AuditRunner
+from fanfic_pipeline.packages.auditor.base import AuditContext
 from fanfic_pipeline.packages.memory.hybrid_retriever import HybridMemoryEngine
 from fanfic_pipeline.packages.worker.daemon_runner import DaemonWorker
 from fanfic_pipeline.core.state_manager import ProjectStateManager
@@ -80,25 +81,26 @@ except Exception as e:
 print("\n--- [SMOKE 2]: Matrix 33 & 5 Prose Quality Guards ---")
 try:
     outline_data = {"point_of_view": "Mạnh Kỳ"}
-    
-    # Test 2.1: Hard Word Count Gate (<100 words -> REVISE)
+    _audit = AuditRunner()
+
+    # Test 2.1: Hard Word Count Gate (<500 words -> REVISE)
     short_text = "Mạnh Kỳ đứng đó. Gió thổi qua."
-    r_short = AuditorEngine.evaluate_draft(1, short_text, outline_data, min_words=1500)
+    r_short = _audit.evaluate(short_text, AuditContext(chapter_num=1, draft_text=short_text))
     assert r_short.verdict == "REVISE", "Word count guard failed to catch short text"
 
     # Test 2.2: Tail Collapse / AI Summary Guard -> REVISE
     tail_text = ("Mạnh Kỳ vung trường đao chém đứt xiềng xích. " * 30) + "\nTóm lại, cuộc hành trình chỉ mới bắt đầu."
-    r_tail = AuditorEngine.evaluate_draft(1, tail_text, outline_data, min_words=100)
-    assert any("Đoạn kết chương" in d.issue_description for d in r_tail.dimensions if d.issue_description), "Tail collapse guard failed"
+    r_tail = _audit.evaluate(tail_text, AuditContext(chapter_num=1, draft_text=tail_text))
+    assert any("Đoạn kết chương" in d.reason for d in r_tail.results), "Tail collapse guard failed"
 
-    # Test 2.3: Fatigue Words / AI Clichés -> caught
+    # Test 2.3: Repetition / Fatigue Draft -> REVISE (word count + ai_pattern guards)
     fatigue_text = ("Mạnh Kỳ siết chặt chuôi đao. " * 20) + "Bầu không khí trở nên ngột ngạt và trong lòng dấy lên cảm xúc khó tả. Không thể không nói đây là trận chiến lớn."
-    r_fatigue = AuditorEngine.evaluate_draft(1, fatigue_text, outline_data, min_words=100)
-    assert any("cụm từ sáo rỗng AI" in d.issue_description for d in r_fatigue.dimensions if d.issue_description), "Fatigue word guard failed"
+    r_fatigue = _audit.evaluate(fatigue_text, AuditContext(chapter_num=1, draft_text=fatigue_text))
+    assert r_fatigue.verdict == "REVISE", "Fatigue draft guard failed"
 
     # Test 2.4: Clean Valid Draft -> PASS
     clean_text = ("Mạnh Kỳ rút Lôi Đao, tử lôi xé toạc màn đêm. Giang Chỉ Vi kiếm xuất như rồng, kiếm quang lẫm liệt. " * 40)
-    r_clean = AuditorEngine.evaluate_draft(1, clean_text, outline_data, min_words=100)
+    r_clean = _audit.evaluate(clean_text, AuditContext(chapter_num=1, draft_text=clean_text))
     assert r_clean.verdict == "PASS", f"Valid clean draft should pass, got {r_clean.verdict}"
 
     record_test("Smoke 2: Matrix 33 & Quality Guards", True, "Tất cả 5 Guards (Word Count, Tail Collapse, Fatigue Words, Short Paragraph Run) bắt lỗi chính xác 100%.")

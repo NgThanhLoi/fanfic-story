@@ -6,7 +6,14 @@ class ButterflyDebtChecker(BaseChecker):
 
     def check(self, draft: str, ctx: AuditContext) -> CheckResult:
         if ctx.ledger and hasattr(ctx.ledger, "ripples"):
-            overdue = [r for r in ctx.ledger.ripples if getattr(r, "status", "") == "pending" and getattr(r, "due_chapter", 9999) < ctx.chapter_num]
+            # Ripple schema: status open|due|satisfied|overdue|waived + due_fic_chapter_range [start, end]
+            if hasattr(ctx.ledger, "overdue"):
+                overdue = ctx.ledger.overdue(ctx.chapter_num)
+            else:
+                overdue = [r for r in ctx.ledger.ripples
+                           if getattr(r, "status", "open") in ("open", "due", "overdue")
+                           and getattr(r, "due_fic_chapter_range", None)
+                           and r.due_fic_chapter_range[1] < ctx.chapter_num]
             if len(overdue) > 5:
                 return CheckResult(
                     checker_id=self.checker_id, status="FAIL", severity=self.severity, score=0.5,

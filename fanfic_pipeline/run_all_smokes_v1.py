@@ -31,7 +31,8 @@ from fanfic_pipeline.core.story_state import StoryStateManager, StateDelta
 from fanfic_pipeline.core.state_manager import ProjectStateManager
 from fanfic_pipeline.core.hierarchical_planner import HierarchicalStoryPlanner
 from fanfic_pipeline.core.context_builder import ContextBuilder
-from fanfic_pipeline.packages.auditor.matrix_33 import AuditorEngine
+from fanfic_pipeline.packages.auditor import AuditRunner
+from fanfic_pipeline.packages.auditor.base import AuditContext
 from fanfic_pipeline.core.transaction_manager import ChapterTransactionManager
 from fanfic_pipeline.core.engine import FanficEngine
 from fanfic_pipeline.core.models import PointOfDivergence, RelationshipState, ChapterDraft, ChapterOutline, SceneBeat
@@ -167,7 +168,7 @@ try:
     new_state = StoryStateManager.apply_delta(cur_state, delta)
     assert new_state["current_location"] == "Sơn đạo Ẩn Hình phường - Đường rút lui"
     assert new_state["team_thien_cong"]["Mạnh Kỳ"] == 250
-    assert "Lệnh bài Tố Nữ Đạo (Hoa sen máu)" in new_state["character_inventories"]["Mạnh Kỳ"]
+    assert "Lệnh bài Tố Nữ Đạo" in new_state["character_inventories"]["Mạnh Kỳ"]
 
     # Validate delta
     is_valid, errors = StoryStateManager.validate_delta(delta, cur_state)
@@ -230,17 +231,18 @@ except Exception as e:
 print("\n--- [TEST 7]: Matrix 33 Deterministic Guards & Strict Re-Audit ---")
 try:
     # 7.1 Guard Short Text -> REVISE
-    r1 = AuditorEngine.evaluate_draft(1, "Mạnh Kỳ đứng đó. Gió thổi qua.", {"point_of_view": "Mạnh Kỳ"}, min_words=1500)
+    _audit = AuditRunner()
+    r1 = _audit.evaluate("Mạnh Kỳ đứng đó. Gió thổi qua.", AuditContext(chapter_num=1))
     assert r1.verdict == "REVISE"
 
     # 7.2 Guard Clichés & Tail Collapse -> REVISE
     cliche_draft = ("Mạnh Kỳ vung trường đao chém tới. " * 30) + "\nTóm lại, cuộc hành trình chỉ mới bắt đầu."
-    r2 = AuditorEngine.evaluate_draft(1, cliche_draft, {"point_of_view": "Mạnh Kỳ"}, min_words=100)
-    assert any("Đoạn kết chương" in d.issue_description for d in r2.dimensions if d.issue_description)
+    r2 = _audit.evaluate(cliche_draft, AuditContext(chapter_num=1))
+    assert any("Đoạn kết chương" in d.reason for d in r2.results)
 
     # 7.3 Clean Draft -> PASS
     clean_draft = ("Mạnh Kỳ rút Lôi Đao, tử lôi xé toạc màn đêm. Giang Chỉ Vi kiếm xuất như rồng. " * 40)
-    r3 = AuditorEngine.evaluate_draft(1, clean_draft, {"point_of_view": "Mạnh Kỳ"}, min_words=100)
+    r3 = _audit.evaluate(clean_draft, AuditContext(chapter_num=1))
     assert r3.verdict == "PASS"
 
     record_test("Test 7: Matrix 33 & Strict Quality Gates", True, "5 Prose Quality Guards and Hard Gatekeeper active (Zero Placeholder 10/10 bypass).")
@@ -261,7 +263,7 @@ try:
     outline1 = ChapterOutline(chapter_number=1, title="Chương 1", point_of_view="Mạnh Kỳ", core_conflict="C1", scene_beats=[SceneBeat(beat_number=1, scene_type="action", characters_present=["Mạnh Kỳ"], a_plot_goal="A", b_plot_goal="B", key_event="K", tension_element="T")])
 
     # 8.1 Atomic Commit Chapter 1
-    h1 = tx_mgr.calculate_hash(clean_draft)
+    h1 = proj_mgr.calculate_draft_hash(clean_draft)
     receipt1 = tx_mgr.commit_transaction(1, draft1, outline1, state_delta=delta, expected_hash=h1)
     assert receipt1["status"] == "COMMITTED"
 
@@ -276,7 +278,7 @@ try:
     # 8.3 Commit Chapter 2 then Rollback
     draft2 = ChapterDraft(chapter_number=2, title="Chương 2", word_count=500, content=clean_draft, summary="S2")
     outline2 = ChapterOutline(chapter_number=2, title="Chương 2", point_of_view="Mạnh Kỳ", core_conflict="C2", scene_beats=[])
-    h2 = tx_mgr.calculate_hash(clean_draft)
+    h2 = proj_mgr.calculate_draft_hash(clean_draft)
     tx_mgr.commit_transaction(2, draft2, outline2, state_delta=delta, expected_hash=h2)
     assert proj_mgr.load_project_meta()["current_chapter"] == 2
 

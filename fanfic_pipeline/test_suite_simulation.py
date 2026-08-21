@@ -24,7 +24,8 @@ from fanfic_pipeline.core.model_router import PipelineModelRouter
 from fanfic_pipeline.data.nhat_the_chi_ton.knowledge import CHARACTER_VOICES
 from fanfic_pipeline.data.nhat_the_chi_ton.macro_bible import DEFAULT_NHAT_THE_MACRO_BIBLE
 from fanfic_pipeline.core.models import PointOfDivergence, RelationshipState
-from fanfic_pipeline.packages.auditor.matrix_33 import AuditorEngine
+from fanfic_pipeline.packages.auditor import AuditRunner
+from fanfic_pipeline.packages.auditor.base import AuditContext
 from fastapi.testclient import TestClient
 from fanfic_pipeline.web_studio import app
 
@@ -88,8 +89,9 @@ def run_simulation():
     # 3. Kiểm tra Deterministic 33-Dimension Prose Audit
     print("\n[BƯỚC 3]: Kiểm tra Ma trận Thẩm định 33 Chiều (5 Prose Quality Guards)...")
     test_short_draft = "Mạnh Kỳ bước vào. Hắn nhìn quanh. Mọi thứ im lặng."
-    audit_short = AuditorEngine.evaluate_draft(1, test_short_draft, {"point_of_view": "Mạnh Kỳ"}, min_words=100)
-    print(f"  * Test draft quá ngắn (<100 từ) -> Verdict: {audit_short.verdict} (Score: {audit_short.overall_score}/10)")
+    _audit = AuditRunner()
+    audit_short = _audit.evaluate(test_short_draft, AuditContext(chapter_num=1))
+    print(f"  * Test draft quá ngắn (<500 từ) -> Verdict: {audit_short.verdict} (Score: {audit_short.score}/100)")
     assert audit_short.verdict == "REVISE", "Guard dung lượng ngắn phải phát hiện lỗi!"
     print("✅ 5 Prose Quality Guards hoạt động chuẩn xác!")
 

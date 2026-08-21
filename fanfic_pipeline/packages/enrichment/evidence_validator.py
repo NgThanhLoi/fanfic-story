@@ -5,7 +5,7 @@ from typing import List, Dict, Any, Tuple, Optional
 from fanfic_pipeline.packages.canon.alias_normalizer import normalize_fold
 
 class EvidenceValidator:
-    def __init__(self, min_length: int = 8):
+    def __init__(self, min_length: int = 10):
         self.min_length = min_length
 
     def validate(self, record: Any, source_chunks: List[Any]) -> Tuple[bool, str]:

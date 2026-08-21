@@ -6,6 +6,7 @@ Backward compat with v1.0 API.
 
 from fanfic_pipeline.core.macro_architecture import VolumeArc, ForeshadowingHook, EpistemicBoundary, BeatContract, NarrativeDebt, NarrativeDebtLedger
 from fanfic_pipeline.core.hierarchical_planner import HierarchicalStoryPlanner, StoryArc, MiniArc, SealedArc, RollingPlan
+from typing import Dict, List, Optional, Tuple
 
 DEFAULT_VOLUMES = [
     VolumeArc(

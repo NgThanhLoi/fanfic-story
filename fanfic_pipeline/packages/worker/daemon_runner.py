@@ -57,13 +57,23 @@ class DaemonWorker:
                 # backward compat: engine may return 3 or 4 values
                 if len(result)==4: outline, draft, critique, state_delta = result
                 else: outline, draft, critique = result; from fanfic_pipeline.core.story_state import StoryStateManager as _SSM; state_delta = _SSM.extract_state_delta = StoryStateManager.extract_state_delta(target_ch, draft.content, self.state_mgr.load_story_state())
-                # Build audit receipt for gate
-                from fanfic_pipeline.packages.auditor.matrix_33 import ConsistencyVerificationStack
-                receipt = ConsistencyVerificationStack.evaluate("", draft.content, outline.model_dump(), audited_hash=self.state_mgr.calculate_draft_hash(draft.content))
+                # Build audit receipt for gate — reuse receipt from run_chapter_step; re-audit only if hash mismatch
+                receipt = getattr(self.engine, 'last_audit_receipt', None)
+                if receipt is None or getattr(receipt, 'draft_hash', None) != self.state_mgr.calculate_draft_hash(draft.content):
+                    from fanfic_pipeline.packages.auditor.base import AuditContext
+                    receipt = self.engine.audit_runner.evaluate(
+                        draft.content,
+                        AuditContext(chapter_num=target_ch, draft_text=draft.content,
+                                     current_state=self.state_mgr.load_story_state(),
+                                     canon_store=self.engine.canon_store,
+                                     enrichment_store=self.engine.enrichment_store,
+                                     ledger=self.engine.ledger,
+                                     writer_packet=getattr(self.engine, '_last_packet', None))
+                    )
                 # Use transactional commit (fail-closed) — not direct state_mgr.commit_chapter
                 # If receipt is REVISE/BLOCK, skip commit and report
                 if receipt.verdict != "PASS":
-                    raise ValueError(f"AUDIT_GATE blocked ch.{target_ch}: verdict={receipt.verdict}, issues={receipt.issues[:2]}")
+                    raise ValueError(f"AUDIT_GATE blocked ch.{target_ch}: verdict={receipt.verdict}, issues={[r.reason for r in receipt.check_results[:2]]}")
                 self.engine.tx_mgr.commit_transaction(target_ch, draft, outline, state_delta, expected_hash=self.state_mgr.calculate_draft_hash(draft.content), audit_receipt=receipt)
                 
                 self.current_task.completed_chapters += 1

@@ -4,7 +4,7 @@ P2.3 — Propagator BFS (SPEC §B3.1 pseudocode):
 - Returns status dict + ripples
 """
 from collections import deque
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Any, Tuple, Optional
 from pydantic import BaseModel, Field
 from fanfic_pipeline.butterfly.convergence import ButterflyPolicy, INERTIA, NECESSITY_TRANSMIT
 

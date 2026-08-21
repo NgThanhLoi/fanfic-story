@@ -133,11 +133,16 @@ def commit_chapter(req: ChapterCommitRequest):
     delta = StoryStateManager.extract_state_delta(req.chapter_number, req.content, current_state)
     
     draft_hash = state_mgr.calculate_draft_hash(req.content)
-    # v1.1 fail-closed: require PASS audit receipt
-    from fanfic_pipeline.packages.auditor.matrix_33 import ConsistencyVerificationStack
-    receipt = ConsistencyVerificationStack.evaluate("", req.content, req.outline_data, audited_hash=draft_hash)
+    # v1.1 fail-closed: require PASS audit receipt (modular AuditRunner)
+    from fanfic_pipeline.packages.auditor.base import AuditContext
+    receipt = engine.audit_runner.evaluate(
+        req.content,
+        AuditContext(chapter_num=req.chapter_number, draft_text=req.content, current_state=current_state,
+                     canon_store=engine.canon_store, enrichment_store=engine.enrichment_store,
+                     ledger=engine.ledger, writer_packet=getattr(engine, '_last_packet', None))
+    )
     if receipt.verdict != "PASS":
-        return {"status": "blocked", "verdict": receipt.verdict, "issues": receipt.issues, "checker_results": [r.model_dump() for r in receipt.checker_results]}
+        return {"status": "blocked", "verdict": receipt.verdict, "issues": [r.reason for r in receipt.check_results if r.status in ("FAIL", "UNKNOWN")], "checker_results": [r.model_dump() for r in receipt.check_results]}
     result = engine.tx_mgr.commit_transaction(
         req.chapter_number, draft, outline, state_delta=delta, expected_hash=draft_hash, audit_receipt=receipt
     )

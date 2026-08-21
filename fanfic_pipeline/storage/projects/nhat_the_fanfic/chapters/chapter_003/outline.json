@@ -1,0 +1,24 @@
+{
+  "chapter_number": 3,
+  "title": "Chương 1",
+  "point_of_view": "Mạnh Kỳ",
+  "core_conflict": "《一世之尊》（精校版全本）作者：爱潜水的乌贼 我这一生，不问前尘，不求来世，只轰轰烈烈，快意恩仇，败尽各族英杰，傲笑六道神魔。",
+  "scene_beats": [
+    {
+      "beat_number": 1,
+      "scene_type": "discovery",
+      "characters_present": [
+        "Mạnh Kỳ",
+        "Giang Chỉ Vi",
+        "Cố Tiểu Tang"
+      ],
+      "a_plot_goal": "Khởi đầu: 《一世之尊》（精校版全本）作者：爱潜水的乌贼 我这一生，不问前尘，不求来世，只轰轰烈烈，快意恩仇，败尽各族英杰，傲笑六道",
+      "b_plot_goal": "Tương tác và thể hiện khẩu khí chuẩn xác.",
+      "key_event": "Biến cố bắt đầu phát triển.",
+      "tension_element": "Nguy cơ từ quy tắc thế giới và kẻ địch."
+    }
+  ],
+  "foreshadowing_hooks": [
+    "Manh mối từ Chương 1"
+  ]
+}

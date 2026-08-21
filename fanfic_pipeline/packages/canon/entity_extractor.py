@@ -127,18 +127,6 @@ class EntityExtractor:
                             b["evidence"] = text[max(0,idx-10): idx+len(alias)+20].strip()
                     b["chapters"].add(chap)
                     b["count"] += 1
-            # CJK direct (entity_spans already covers via normalizer's alias_index which includes CJK, but double ensure)
-            for cjk in ["孟奇","江芷微","顾小桑","齐正言","阮玉书"]:
-                if cjk in text:
-                    # Map to known eid if not already via spans
-                    eid_map={"孟奇":"char_meng_qi","江芷微":"char_jiang_zhiwei","顾小桑":"char_gu_xiaosang","齐正言":"char_qi_zhengyan","阮玉书":"char_ruan_yushu"}
-                    eid=eid_map.get(cjk)
-                    if eid and eid not in [sp["entity_id"] for sp in spans]:
-                        if eid not in bucket:
-                            idx=text.find(cjk)
-                            bucket[eid]={"first_seen_chapter": chap, "first_seen_chunk": chunk_id, "evidence": text[max(0,idx-10):idx+len(cjk)+20].strip(), "chapters": set([chap]), "count": 1, "chunk_id": chunk_id}
-                        else:
-                            bucket[eid]["chapters"].add(chap); bucket[eid]["count"]+=1
 
         # Convert to CanonEntityRecord
         out: Dict[str, CanonEntityRecord] = {}

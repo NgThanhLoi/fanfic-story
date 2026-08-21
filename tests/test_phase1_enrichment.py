@@ -134,7 +134,11 @@ def test_P1_T6_canon_exam_gate():
 
     exam = CanonExam(enrichment_store=store)
     qs = exam.generate(n=10)
-    assert len(qs) == 10
+    # Dynamic generation: with 1 entity + realm questions, expect >= 5 unique questions
+    assert len(qs) >= 5, f"Expected >= 5 questions from dynamic generation, got {len(qs)}"
+    # All prompts must be unique (no seed duplication)
+    prompts = [q.prompt for q in qs]
+    assert len(set(prompts)) == len(prompts), "Duplicate prompts detected — hardcode leak"
 
     # Gate without answers -> Fail (not submitted)
     gate_empty = exam.gate(answers=None, questions=qs)

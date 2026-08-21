@@ -21,7 +21,6 @@ if str(PROJECT_ROOT) not in sys.path:
 from fanfic_pipeline.core.models import PointOfDivergence, RelationshipState
 from fanfic_pipeline.core.state_manager import ProjectStateManager
 from fanfic_pipeline.core.engine import FanficEngine
-from fanfic_pipeline.core.story_state import RiskProfiler
 from fanfic_pipeline.data.nhat_the_chi_ton.knowledge import CHARACTER_VOICES
 
 def cmd_init(args):
@@ -142,26 +141,40 @@ def cmd_write_next(args):
         hitl_callbacks=hitl_callbacks if is_hitl else None
     )
 
+    # Butterfly state display (SPEC §6.2.5)
+    if engine.ledger and engine.ledger.divergences:
+        _open = [r for r in engine.ledger.ripples if r.status == "open"]
+        _due = [r for r in engine.ledger.ripples if r.status == "due"]
+        _sat = [r for r in engine.ledger.ripples if r.status == "satisfied"]
+        _cf = engine.counterfactual.cannot_happen() if engine.counterfactual else []
+        print(f"🦋 Butterfly: {len(engine.ledger.divergences)} divergence, {len(_open)} ripple đang mở, {len(_due)} đáo hạn, {len(_sat)} đã trả, {len(_cf)} cannot_happen")
+
     # v1.1.1 fail-closed: reuse receipt from engine.audit_draft (already has canon_evidence/state_delta)
     draft_hash = mgr.calculate_draft_hash(draft.content)
     # Prefer the receipt already computed inside audit_draft (has proper evidence); fallback only if missing
     receipt = getattr(engine, 'last_audit_receipt', None)
     # Re-validate that receipt matches current draft hash (HITL edit invalidates)
-    if receipt is None or getattr(receipt, 'audited_hash', None) != draft_hash:
-        from fanfic_pipeline.packages.auditor.matrix_33 import ConsistencyVerificationStack
+    if receipt is None or getattr(receipt, 'draft_hash', None) != draft_hash:
+        from fanfic_pipeline.packages.auditor.base import AuditContext
         # Build with proper context, not empty
         _canon_ev = engine.canon_store.search_canon(draft.content[:500], chapter_context=next_ch, top_k=4) if engine.canon_store else []
-        receipt = ConsistencyVerificationStack.evaluate("", draft.content, outline.model_dump(), risk_level=RiskProfiler.compute_risk(delta, draft.content)["level"], state_delta=delta, canon_evidence=_canon_ev, audited_hash=draft_hash)
+        _ctx = AuditContext(chapter_num=next_ch, draft_text=draft.content, current_state=mgr.load_story_state(),
+                            pod=mgr.load_pod(), canon_store=engine.canon_store,
+                            enrichment_store=engine.enrichment_store,
+                            ledger=engine.ledger, writer_packet=getattr(engine, '_last_packet', None))
+        receipt = engine.audit_runner.evaluate(draft.content, _ctx)
+        if receipt.draft_hash != draft_hash:
+            receipt.draft_hash = draft_hash
     if receipt.verdict != "PASS":
         # In dry-run demo mode the draft is short -> REVISE is expected; allow --force-auto to override for testing with warning
         if args.force_auto and receipt.verdict == "REVISE":
-            print(f"\n⚠️  AUDIT REVISE but --force-auto: proceeding with warning (issues: {len(receipt.issues)})")
-            for iss in receipt.issues[:3]:
-                print(f"  - [{iss['checker_id']}] {iss['reason']} ({iss['status']})")
+            print(f"\n⚠️  AUDIT REVISE but --force-auto: proceeding with warning (issues: {len(receipt.check_results)})")
+            for iss in receipt.check_results[:3]:
+                print(f"  - [{iss.checker_id}] {iss.reason} ({iss.status})")
         else:
             print(f"\n⛔ AUDIT GATE BLOCKED ch.{next_ch}: verdict={receipt.verdict}")
-            for iss in receipt.issues[:3]:
-                print(f"  - [{iss['checker_id']}] {iss['reason']} ({iss['status']})")
+            for iss in receipt.check_results[:3]:
+                print(f"  - [{iss.checker_id}] {iss.reason} ({iss.status})")
             print("Khắc phục lỗi rồi chạy lại. Không commit REVISE/REJECT. Dùng --force-auto để ép commit khi test dry-run.")
             return
     meta_head = mgr.load_project_meta().get("current_chapter", 0)

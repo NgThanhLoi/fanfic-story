@@ -9,7 +9,7 @@ Fanfic Pipeline Orchestrator v1.1 (FR-40/41 fail-closed):
 import os
 import json
 import re
-from typing import Dict, Any, Optional, Callable, Tuple
+from typing import Dict, Any, Optional, Callable, Tuple, List
 from fanfic_pipeline.core.models import (
     ChapterOutline, ChapterDraft, OOCCriticResult, SceneBeat, PointOfDivergence
 )
@@ -27,6 +27,15 @@ from fanfic_pipeline.core.prompts import (
     BEAT_PLANNER_SYSTEM, BEAT_PLANNER_USER_TEMPLATE,
     SCENE_WRITER_SYSTEM, OOC_CRITIC_SYSTEM
 )
+from fanfic_pipeline.butterfly.divergence_ledger import DivergenceLedger, Divergence
+from fanfic_pipeline.butterfly.counterfactual import CounterfactualCache
+from fanfic_pipeline.butterfly.convergence import ButterflyPolicy
+
+class _ButterflyPropagator:
+    """Adapter để DivergenceLedger.bind() gọi module-level propagate function."""
+    def propagate(self, pod, divergences, graph, policy, current_chapter=1):
+        from fanfic_pipeline.butterfly.propagator import propagate
+        return propagate(pod, divergences, graph, policy, current_chapter=current_chapter)
 
 class FanficEngine:
     def __init__(
@@ -46,11 +55,131 @@ class FanficEngine:
         self.canon_store = canon_store or CanonStore(canon_dir)
         
         self.planner = get_default_hierarchical_planner()
-        self.context_builder = ContextBuilder(self.canon_store, self.memory_engine, self.planner)
-        self.context_compiler = ContextCompiler(self.canon_store, self.memory_engine, self.planner)
+        self.enrichment_store = self._load_enrichment_store()
+        self.context_builder = ContextBuilder(self.canon_store, self.memory_engine, self.planner, enrichment_store=self.enrichment_store)
+        self.context_compiler = ContextCompiler(self.canon_store, self.memory_engine, self.planner, enrichment_store=self.enrichment_store)
         self.audit_runner = AuditRunner()
         self.tx_mgr = ChapterTransactionManager(self.state_mgr, self.memory_engine)
         self.last_audit_receipt = None
+        # Butterfly Effect Engine (SPEC §B2-B4): DivergenceLedger + CounterfactualCache + POD + CausalGraph
+        self.ledger = None
+        self.counterfactual = None
+        self.butterfly_pod = None
+        self.butterfly_graph = None
+        self._init_butterfly()
+
+    def _load_enrichment_store(self):
+        """Load EnrichmentStore (SQLite) nếu project đã chạy 'enrich'; None nếu chưa (graceful)."""
+        db_path = os.path.join(self.state_mgr.project_dir, "enrichment.db")
+        if os.path.exists(db_path):
+            try:
+                from fanfic_pipeline.packages.enrichment.enrichment_store import EnrichmentStore
+                return EnrichmentStore(db_path)
+            except Exception:
+                return None
+        return None
+
+    def _init_butterfly(self):
+        """Load butterfly state từ project dir: POD, DivergenceLedger, CounterfactualCache, CausalGraph.
+        Mọi thứ optional — project chưa set POD / chưa enrich vẫn chạy (butterfly no-op)."""
+        from fanfic_pipeline.butterfly.pod import POD
+        from fanfic_pipeline.packages.canon.canon_graph_v2 import CanonGraphV2
+        bf_dir = os.path.join(self.state_mgr.project_dir, "butterfly")
+        # POD (butterfly schema)
+        pod_path = os.path.join(bf_dir, "pod.json")
+        self.butterfly_pod = POD.load(pod_path) if os.path.exists(pod_path) else None
+        # DivergenceLedger
+        ledger_path = os.path.join(bf_dir, "divergence_ledger.json")
+        self.ledger = DivergenceLedger.load(ledger_path) if os.path.exists(ledger_path) else DivergenceLedger()
+        # CounterfactualCache
+        cf_path = os.path.join(bf_dir, "counterfactual.json")
+        self.counterfactual = CounterfactualCache.load(cf_path) if os.path.exists(cf_path) else CounterfactualCache()
+        # CausalGraph v2 từ enrichment store (SQLite)
+        if self.enrichment_store is not None:
+            try:
+                self.butterfly_graph = CanonGraphV2()
+                self.butterfly_graph.sync_from_enrichment(self.enrichment_store)
+            except Exception:
+                self.butterfly_graph = None
+        else:
+            self.butterfly_graph = None
+        # Bind propagator/graph/policy vào ledger (SPEC §6.2.1)
+        if self.butterfly_pod is not None and self.butterfly_graph is not None:
+            self.ledger.bind(
+                propagator=_ButterflyPropagator(),
+                graph=self.butterfly_graph,
+                policy=ButterflyPolicy.default(),
+                pod=self.butterfly_pod
+            )
+
+    def _extract_divergences(self, chapter_num: int, draft_text: str) -> List[Divergence]:
+        """DivergenceExtractor heuristic (SPEC §B2.2 nguồn (a)+b): POD changed_facts được kích hoạt
+        khi draft của chapter >= at_fic_chapter thực sự thể hiện statement của POD.
+        Evidence-substring: keyword lấy từ POD.statement (tên riêng) phải xuất hiện trong draft."""
+        if self.butterfly_pod is None:
+            return []
+        registered = {(d.fact, d.op) for d in self.ledger.divergences}
+        pod = self.butterfly_pod
+        # Keywords từ statement: tách token dài >= 4 ký tự (tên riêng như "Mạnh Kỳ", "Lục Đạo", "Giang Chỉ Vi")
+        keywords = [w for w in re.findall(r'[\wÀ-ỹ]+', pod.statement) if len(w) >= 4]
+        if not keywords:
+            keywords = ["Mạnh Kỳ"]
+        out = []
+        for i, cf in enumerate(pod.changed_facts):
+            if (cf.fact, cf.op) in registered:
+                continue
+            if chapter_num < cf.at_fic_chapter:
+                continue
+            if any(kw in draft_text for kw in keywords):
+                out.append(Divergence(
+                    id=f"DIV:SEED{i:03d}", fact=cf.fact, op=cf.op,
+                    origin_fic_chapter=chapter_num,
+                    cause=pod.statement[:120] or f"POD {pod.id} changed_fact {cf.fact}",
+                    scope=pod.scope, tier=1, approved=True
+                ))
+        return out
+
+    def _refresh_counterfactual(self, chapter_num: int):
+        """Recompute counterfactual status từ toàn bộ divergences (SPEC §6.2.3 incremental)."""
+        if self.ledger._graph is None or self.ledger._propagator is None or self.ledger._policy is None:
+            return
+        try:
+            status = self.ledger._propagator.propagate(
+                self.butterfly_pod, self.ledger.divergences, self.ledger._graph,
+                self.ledger._policy, current_chapter=chapter_num
+            )
+            self.counterfactual.update_from_status(status)
+        except Exception:
+            pass
+
+    def _save_butterfly_state(self):
+        """Persist DivergenceLedger + CounterfactualCache vào project dir (SPEC §6.2.5 commit)."""
+        bf_dir = os.path.join(self.state_mgr.project_dir, "butterfly")
+        if self.ledger is not None:
+            self.ledger.save(os.path.join(bf_dir, "divergence_ledger.json"))
+        if self.counterfactual is not None:
+            self.counterfactual.save(os.path.join(bf_dir, "counterfactual.json"))
+
+    def _butterfly_lifecycle(self, chapter_num: int, draft: ChapterDraft):
+        """SPEC §6.2.5: ripples_due inject → extract divergence → propagate → mark satisfied → save."""
+        if self.ledger is None or self.butterfly_pod is None:
+            return
+        # 1. Extract divergence mới từ draft → propagate sinh ripples
+        for div in self._extract_divergences(chapter_num, draft.content):
+            try:
+                self.ledger.add_divergence(div)
+            except Exception:
+                pass
+        # 2. Mark ripples satisfied khi expected_manifestation xuất hiện trong draft
+        for r in self.ledger.ripples_due(chapter_num):
+            if r.expected_manifestation and r.expected_manifestation in draft.content:
+                try:
+                    self.ledger.mark_satisfied(r.id, chapter_num, r.expected_manifestation, draft.content)
+                except ValueError:
+                    pass
+        # 3. Recompute counterfactual + persist
+        self._refresh_counterfactual(chapter_num)
+        self._save_butterfly_state()
 
 
     def _execute_agent(self, agent_name: str, config: AgentModelConfig, system_prompt: str, user_prompt: str, json_mode: bool = False) -> str:
@@ -295,7 +424,23 @@ Hãy viết Chương {outline.chapter_number}: "{outline.title}" — chỉ dùng
         canon_hits = self.canon_store.search_canon(author_instruction + " " + h_ctx.get('mini_arc_objective',''), chapter_context=chapter_num, top_k=5) if self.canon_store else []
         memory_hits = self.memory_engine.search(author_instruction, current_chapter=chapter_num, top_k=5) if self.memory_engine else []
         active = state.get("active_characters", [pov])
-        return self.context_compiler.compile_writer_packet(chapter_num, pov, active, state, h_ctx, canon_hits, memory_hits, voices, author_instruction)
+        # Butterfly state inject (SPEC §6.2.5): ripples_due, forbidden cannot_happen, canon_time_max, counterfactual
+        ripples_due = []
+        forbidden = []
+        counterfactual = None
+        canon_time_max = chapter_num
+        if self.ledger is not None:
+            ripples_due = [r.model_dump() for r in self.ledger.ripples_due(chapter_num)]
+        if self.counterfactual is not None:
+            forbidden = list(self.counterfactual.cannot_happen())
+            try:
+                counterfactual = self.counterfactual.model_dump()
+            except Exception:
+                pass
+        return self.context_compiler.compile_writer_packet_v2(
+            chapter_num, pov, active, state, h_ctx, canon_hits, memory_hits, voices, author_instruction,
+            canon_time_max=canon_time_max, counterfactual=counterfactual, ripples_due=ripples_due, forbidden=forbidden
+        )
 
     def audit_draft(self, outline: ChapterOutline, draft: ChapterDraft) -> OOCCriticResult:
         voices = self.state_mgr.load_voices()
@@ -303,12 +448,18 @@ Hãy viết Chương {outline.chapter_number}: "{outline.title}" — chỉ dùng
 
         # 1. Modular AuditRunner evaluation (fail-closed)
         _tmp_state = self.state_mgr.load_story_state()
+        # Butterfly POD ưu tiên (có anchor_chapter/changed_facts); fallback legacy POD
+        _audit_pod = self.butterfly_pod if self.butterfly_pod is not None else pod
         ctx = AuditContext(
             chapter_num=draft.chapter_number,
             draft_text=draft.content,
             current_state=_tmp_state,
-            pod=pod,
-            writer_packet=getattr(self, "_last_packet", None)
+            pod=_audit_pod,
+            writer_packet=getattr(self, "_last_packet", None),
+            ledger=self.ledger,
+            canon_store=self.canon_store,
+            enrichment_store=self.enrichment_store,
+            author_instruction=getattr(self, "_last_author_instruction", "")
         )
         receipt = self.audit_runner.evaluate(draft.content, ctx)
         self.last_audit_receipt = receipt
@@ -376,6 +527,7 @@ Hãy đánh giá OOC Score (0-10), Canon Consistency Score (0-10), De-AI Score (
         hitl_callbacks: Optional[Dict[str, Callable]] = None,
         max_revision_cycles: int = 2
     ) -> Tuple[ChapterOutline, ChapterDraft, OOCCriticResult, StateDelta]:
+        self._last_author_instruction = author_instruction
         # Step 1: Plan Outline with Composer Agent
         outline = self.plan_chapter(chapter_num, author_instruction)
         
@@ -387,6 +539,9 @@ Hãy đánh giá OOC Score (0-10), Canon Consistency Score (0-10), De-AI Score (
         packet = self.build_sealed_packet(chapter_num, author_instruction)
         self._last_packet = packet
         draft = self.write_draft(outline, sealed_packet=packet)
+
+        # Step 2.5: Butterfly lifecycle (SPEC §6.2.5) — extract divergence → propagate → mark satisfied
+        self._butterfly_lifecycle(chapter_num, draft)
 
         # Step 3: Audit Draft with Modular AuditRunner & Actionable Directives
         critique = self.audit_draft(outline, draft)
@@ -429,5 +584,9 @@ Hãy đánh giá OOC Score (0-10), Canon Consistency Score (0-10), De-AI Score (
         meta = self.state_mgr.load_project_meta()
 
         expected_head = meta.get("current_chapter", 0)
-        return self.tx_mgr.commit_transaction(chapter_num, draft, outline, state_delta, expected_hash=self.state_mgr.calculate_draft_hash(draft.content), packet_hash=packet.packet_hash if packet else "", plan_hash="", audit_receipt=audit_receipt, branch_id=branch_id, expected_head=expected_head)
-
+        # P4.4: Save butterfly state BEFORE commit so it's part of the atomic boundary.
+        # If commit fails, butterfly state is still consistent with pre-commit state.
+        # If commit succeeds, butterfly state matches the committed chapter.
+        self._save_butterfly_state()
+        result = self.tx_mgr.commit_transaction(chapter_num, draft, outline, state_delta, expected_hash=self.state_mgr.calculate_draft_hash(draft.content), packet_hash=packet.packet_hash if packet else "", plan_hash="", audit_receipt=audit_receipt, branch_id=branch_id, expected_head=expected_head)
+        return result
